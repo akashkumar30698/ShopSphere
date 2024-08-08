@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { BrowserRouter,Route,Routes } from 'react-router-dom'
-import Login from './Login.jsx'
-import Vendor from './Vendor.jsx'
-import ForgetPassword from './ForgetPassword.jsx'
-import ResetPassword from './resetPassword.jsx'
-import ValidateOTP from './validateOTP.jsx'
+import Login from './pages/login/Login.jsx'
+import Vendor from './pages/vendor/Vendor.jsx'
+import ForgetPassword from './pages/forgetPassword/ForgetPassword.jsx'
+import ResetPassword from './pages/forgetPassword/resetPassword.jsx'
+import ValidateOTP from './pages/forgetPassword/validateOTP.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
+import SignUP from './pages/signUP/signUP.jsx'
 
 
 
@@ -28,7 +28,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 
-const clientId = "740594159422-hkkoi1tp4vni1ctt0e82evikv316m5j2.apps.googleusercontent.com"
+const clientId = "740594159422-7pgrs51mlvr2ni5f6000mdu4550limqv.apps.googleusercontent.com"
 
 
 
@@ -45,7 +45,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
          <Route path="/forgetPassword"  element={<ForgetPassword/>}/>
           <Route path="/resetPassword"  element={<ResetPassword/>} />
           <Route path="/validateOTP"    element={<ValidateOTP/>} />
-          
+           <Route path="/signUP" element={<SignUP/>} />
 
       </Routes>
      </BrowserRouter>

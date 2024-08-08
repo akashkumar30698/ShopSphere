@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './navbar.css'
+
 import {  useNavigate } from "react-router-dom";
 
 function ResetPassword(){
