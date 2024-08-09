@@ -1,4 +1,9 @@
 const { newUser } = require("../model/userAuth")
+const nodemailer = require('nodemailer')
+const bcrypt = require('bcrypt')
+require('dotenv').config()
+
+
 
 
 //Store email
@@ -27,12 +32,14 @@ function generateOTP() {
   
 
 
-  //Forget Password
+
+
+//Forget Password
 async function handleForgetPassword(req,res) {
 
        try{
-        const { email,role} = req.body
-        const exist =   await newUser.findOne({email,role})
+        const { email } = req.body
+        const exist =   await newUser.findOne({email})
 
      if(!exist || exist == null){
             return res.json("failure")
@@ -40,8 +47,6 @@ async function handleForgetPassword(req,res) {
 
 
 
-
-      if(role == 'USER' || role == 'VENDOR'){
             
         storeEmail = email
 
@@ -69,7 +74,7 @@ async function handleForgetPassword(req,res) {
         });
 
 
-      }
+      
 
 
        }
@@ -87,10 +92,8 @@ async function handleForgetPassword(req,res) {
       
        const{ otp } = req.body
        if(storeOTP == otp){
-        return res.json("success")
+        return res.json("correct")
        }
-
-
 
     }
     catch(err){
@@ -99,14 +102,38 @@ async function handleForgetPassword(req,res) {
  }
 
 
+
+
 //Reset Password 
 async function handleResetPassword(req,res){
+
     try{
         const {email,password,confirmPassword,role} = req.body
+
+
+
+
 
         if(email != storeEmail || password != confirmPassword){
               return res.json("failure")
         }
+ 
+        //Filter Out All Google Auth Users
+       const checkGoogleAuthUser = await findOne({email})
+         
+        const googleHashedPassword = checkGoogleAuthUser.password
+        const googleAuth = process.env.GOOGLE_AUTH
+        const filterGoogleAuth = await bcrypt.compare(googleAuth,googleHashedPassword)
+        const filter = {$ne : {password: filterGoogleAuth}}
+
+        if(filter){
+          return res.json("google-Auth")
+        }
+ 
+
+
+
+
         
         const saltrounds = 10
         const hashedPassword = await bcrypt.hash(password,saltrounds)

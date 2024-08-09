@@ -63,9 +63,7 @@ function Navbar() {
 
 
                         <button id="myCartDropdownButton1" data-dropdown-toggle="myCartDropdown1" type="button" className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
-
-                            <span className="hidden sm:flex"><Link to="/vendor">Vendor</Link></span>
-
+                            <span className="hidden sm:flex"><Link to="/vendor/login">Vendor</Link></span>
                         </button>
 
 

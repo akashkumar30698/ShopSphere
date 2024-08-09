@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from 'react'
 
 
-function ForgetPassword() {
+function VendorForgetPassword() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [check,setCheck] = useState(false)
@@ -23,7 +23,7 @@ function ForgetPassword() {
         setLoading(true)
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_APP_URL}/forgetPassword`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_URL}/vendor/forgetPassword`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(email),
@@ -32,16 +32,13 @@ function ForgetPassword() {
             if (response.ok) {
                 const data = await response.json()
 
-       
-              
-                
                     if(data == 'success'){
                         setCheck(false)
                         setEmail({
                             email : ""
                        })
                                         
-                      navigate("/validateOTP")
+                      navigate("/vendor/validateOTP")
             
 
                     }
@@ -81,7 +78,7 @@ function ForgetPassword() {
                                 <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" onChange={handleChange} required />
                             </div>
 
-                            {check && <p className='text-red-700'>Please Enter a valid Email</p>}
+                             {check && <p className='text-red-700'>Please Enter a valid Email</p>}
 
                             <button type="submit" className="flex w-full justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-semibold leading-6  shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">{loading ? "Sending..." : "Send OTP"}</button>
 
@@ -95,4 +92,4 @@ function ForgetPassword() {
 }
 
 
-export default ForgetPassword
+export default VendorForgetPassword

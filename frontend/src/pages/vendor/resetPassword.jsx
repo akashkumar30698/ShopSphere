@@ -1,23 +1,19 @@
 import { useState } from 'react'
 import {  useNavigate,useLocation } from "react-router-dom";
 
-function ResetPassword(){
+function VendorResetPassword(){
     const navigate = useNavigate()
     const[check,setCheck] = useState(false)
     const [loading,setLoading] = useState(false)
-    const[passwordError,setPasswordError] = useState(false)
-    const [checkGoogleAuth,setCheckGoogleAuth] = useState(false)
+    const[checkAuthenEmailReset,setCheckAuthenEmailReset] = useState(false)
+    const [passwordError,setPasswordError] = useState(false)
     const [resetData,setResetData] = useState({
         email : "",
         password : "",
         confirmPassword : ""
     })
-    const[checkAuthenEmailReset,setCheckAuthenEmailReset] = useState(false)
-
-
     const location = useLocation()
-    const { otpState } = location?.state || {}
-
+    const  { otpState }  = location.state || {}
 
     const handleChange = (e) =>{
         setResetData({...resetData,[e.target.name] : e.target.value})
@@ -27,7 +23,7 @@ function ResetPassword(){
     const handleSubmit = async (e) =>{
         e.preventDefault()
 
-        //Character sets for validation
+              //Character sets for validation
     const specialChar = "@#!%$&";
     const smallAlpha = "abcdefghijklmnopqrstuvwxyz";
     const capAlpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -58,8 +54,9 @@ function ResetPassword(){
 
         setLoading(true)
 
+
         try{
-            const response = await fetch(`${import.meta.env.VITE_APP_URL}/ResetPassword`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_URL}/vendor/resetPassword`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(resetData),
@@ -69,19 +66,21 @@ function ResetPassword(){
                 const data = await response.json()
                 
                 if(data == 'success'){
-                     if(otpState == true){
+                    if(otpState == true){
                         setCheck(false)
                         navigate("/login")
-                        setCheckGoogleAuth(false)
                         setCheckAuthenEmailReset(false)
-                     }
-                    else if(otpState == null || otpState == false || otpState == undefined){
-                    setCheckAuthenEmailReset(true)
-                 }
+                    }
+
+                   else if(otpState == null || otpState == false){
+                           setCheckAuthenEmailReset(false)
+                   }
 
 
-                }
-                else if(data == 'failure'){
+
+
+
+                }else if(data == 'failure'){
                     setCheck(true)
                     setResetData({
                         email : "",
@@ -89,14 +88,6 @@ function ResetPassword(){
                         confirmPassword : ""
                     })
 
-                }
-                else if(data == 'google-auth'){
-                    setResetData({
-                        email : "",
-                        password : "",
-                        confirmPassword : ""
-                    })
-                    setCheckGoogleAuth(true)
                 }
                
             }
@@ -126,7 +117,6 @@ function ResetPassword(){
               </div>
               <div>
                   <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">New Password</label>
-
                   <input type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={handleChange} value={resetData.password} required/>
                   {passwordError && <p className='text-red-700'>Password must contain lowercase,uppercase,special char and numbers</p>}
               </div>
@@ -135,8 +125,10 @@ function ResetPassword(){
                   <input type="password" name="confirmPassword" id="confirmPassword" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-white-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={handleChange} value={resetData.confirmPassword} required/>
               </div>
          {check && <p className='text-red-700'>Invalid Credentials! Try Again</p>}
+
+
          {checkAuthenEmailReset && <p className='text-red-700'>UNAUTHORIZED! Kindly validate OTP first </p>}
-         {checkGoogleAuth && <p className='text-red-700'>Unable to reset passwords that are signed UP via Google-Auth</p>}
+      
               <button type="submit" className="w-full text-white bg-primary-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 bg-black">{loading? "Resetting" : "Reset Password"}</button>
           </form>
       </div>
@@ -146,4 +138,4 @@ function ResetPassword(){
     )
 }
 
-export default ResetPassword
+export default VendorResetPassword

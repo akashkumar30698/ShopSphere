@@ -2,7 +2,7 @@ import { useState } from "react"
 import {  useNavigate } from "react-router-dom";
 
 
-function ValidateOTP(){
+function VendorValidateOTP(){
     const navigate = useNavigate()
 
     const [otp,setOtp] = useState({
@@ -25,7 +25,7 @@ function ValidateOTP(){
                setLoading(true)
 
               try{
-                const response = await fetch(`${import.meta.env.VITE_APP_URL}/validateOTP`, {
+                const response = await fetch(`${import.meta.env.VITE_APP_URL}/vendor/validateOTP`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(otp),
@@ -40,7 +40,7 @@ function ValidateOTP(){
                            
 
                           if(data == 'correct'){
-                            navigate("/ResetPassword",{state : {otpState : true}})
+                            navigate("/vendor/resetPassword",{state : {otpState : true}})
                             
                          }
                           else{
@@ -48,12 +48,7 @@ function ValidateOTP(){
                             console.log("Otp is incorrect")
                           }
     
-
-
                     })
-
-
-
 
 
                  }
@@ -95,4 +90,4 @@ function ValidateOTP(){
     )
 }
 
-export default ValidateOTP
+export default VendorValidateOTP

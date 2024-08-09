@@ -1,30 +1,34 @@
-import React, { useState ,useEffect } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode }  from "jwt-decode";
 
 
-
-
-function SignUp() {
+function SignUP() {
   const navigate = useNavigate();
-  const [check,setCheck] = useState(null)
-  const [loading,setLoading] =  useState(false)
-   const [passwordError,setPasswordError] = useState(false)
-
+  const [check, setCheck] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [passwordError, setPasswordError] = useState(false)
+  const [isGoogleAuth, setIsGoogleAuth] = useState(false)
   const [formData, setFormData] = useState({
-    name: "",           
+    name: "",
     email: "",
-    password: "",             
-  });                  
-  
-  
-  const handleChange = (event) => {                                  
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };                                      
-                                
-  const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    password: "",
+  });
 
-        //Character sets for validation
+
+
+
+
+  //Regular Sign UP
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    //Character sets for validation
     const specialChar = "@#!%$&";
     const smallAlpha = "abcdefghijklmnopqrstuvwxyz";
     const capAlpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -50,34 +54,32 @@ function SignUp() {
       return;
     } else {
       setPasswordError(false);
+
     }
 
-
-
-
-
-      setLoading(true)
+    setLoading(true)
     try {
-      
+
       const response = await fetch(`${import.meta.env.VITE_APP_URL}/signUP`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData), 
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
-      
+
         const data = await response.json();
-         
+
         if (data !== "exist") {
-       
-                setLoading(false)  
-          navigate("/",{state : {signupState : true}});
+
+          setLoading(false)
+          navigate("/", { state: { signupState: true } });
+
         }
 
-        else if(data == "exist"){
-               setCheck(true)
-               setLoading(false)
+        else if (data == "exist") {
+          setCheck(true)
+          setLoading(false)
         }
 
         else {
@@ -91,15 +93,55 @@ function SignUp() {
       }
     } catch (error) {
       console.error("Signup error:", error);
-    }finally{
+    } finally {
       setLoading(false)
     }
   };
 
-   
+
+  //Google Sign UP
+  const handleSuccess = async (res) => {
+    const userDetails = jwtDecode(res.crediential)
+    const { given_name, email, picture } = userDetails
+
+    setIsGoogleAuth(true)
+    try {
+
+
+      const res = await fetch(`${import.meta.env.VITE_APP_URL}/signUP`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          given_name: given_name,
+          googleEmail: email,
+          picture: picture,
+          isGoogleAuth: isGoogleAuth
+        }),
+      });
+
+
+      if (res.ok) {
+
+        const data = await res.json()
+
+        if (data == 'success') {
+          navigate("/")
+        }
+      }
 
 
 
+    } catch (err) {
+      console.log("Error at login.jsx", err)
+    } finally {
+      setIsGoogleAuth(false)
+    }
+
+  }
+
+ const handleError = () =>{
+     console.log("Some error occured while signing UP with google",err)
+ }
 
 
 
@@ -108,78 +150,85 @@ function SignUp() {
 
   return (
     <>
-        <form  action="/signUP"   onSubmit={handleSubmit} method="POST">
-        
-<div className="bg-grey-lighter min-h-screen flex flex-col">
-            <div className="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
-                <div className="bg-white px-6 py-8 rounded shadow-md text-black w-full">
-                    <h1 className="mb-8 text-3xl text-center">Sign up</h1>
-                    <input 
-                        type="text"
-                        className="block border border-grey-light w-full p-3 rounded mb-4"
-                        value={formData.name}
-                        onChange={handleChange}
-                        name="name"
-                        placeholder="Full Name" />
+      <form action="/signUP" onSubmit={handleSubmit} method="POST">
 
-                    <input 
-                        type="text"
-                        className="block border border-grey-light w-full p-3 rounded mb-4"
-                        onChange={handleChange}
-                        value={formData.email}
-                        name="email"
-                        placeholder="Email" />
+        <div className="bg-grey-lighter min-h-screen flex flex-col">
+          <div className="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
+            <div className="bg-white px-6 py-8 rounded shadow-md text-black w-full">
+              <h1 className="mb-8 text-3xl text-center">Sign up</h1>
+              <input
+                type="text"
+                className="block border border-grey-light w-full p-3 rounded mb-4"
+                value={formData.name}
+                onChange={handleChange}
+                name="name"
+                placeholder="Full Name" />
 
-                    <input 
-                        type="password"
-                        className="block border border-grey-light w-full p-3 rounded mb-4"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="Password" />
-              
+              <input
+                type="text"
+                className="block border border-grey-light w-full p-3 rounded mb-4"
+                onChange={handleChange}
+                value={formData.email}
+                name="email"
+                placeholder="Email" />
+
+              <input
+                type="password"
+                className="block border border-grey-light w-full p-3 rounded mb-4"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password" />
+
               {passwordError && <p className="text-red-700">Password must contain Uppercase,lowercase,special char and numbers</p>}
-                      
-             {check && <p className=" mt-6" id="color"  >User already exists</p>  }
+
+              {check && <p className=" mt-6" id="color"  >User already exists</p>}
 
 
-                    <button
-                        type="submit"
-                        className="w-full text-center py-3 rounded bg-black text-white hover:bg-gray focus:outline-none my-1"
-                    >{loading? "Signing UP" : "Sign UP"}</button>
-
-                    <div className="text-center text-sm text-grey-dark mt-4">
-                        By signing up, you agree to the 
-                        <a className="no-underline border-b border-grey-dark text-grey-dark" >
-                            Terms of Service
-                        </a> and 
-                        <a className="no-underline border-b border-grey-dark text-grey-dark" >
-                            Privacy Policy
-                        </a>
-                    </div>
-                </div>
-
-     
+              <GoogleLogin
+                onSuccess={handleSuccess}
+                onError={handleError}
+              />
 
 
-                <div className="text-grey-dark mt-6">
-                    Already have an account? 
-                    <Link className="no-underline border-b border-blue text-blue" to="/login">
-                        Log in
-                    </Link>.
-                </div>
+
+              <button
+                type="submit"
+                className="w-full text-center py-3 rounded bg-black text-white hover:bg-gray focus:outline-none my-1"
+              >{loading ? "Signing UP" : "Sign UP"}</button>
+
+              <div className="text-center text-sm text-grey-dark mt-4">
+                By signing up, you agree to the
+                <a className="no-underline border-b border-grey-dark text-grey-dark" >
+                  Terms of Service
+                </a> and
+                <a className="no-underline border-b border-grey-dark text-grey-dark" >
+                  Privacy Policy
+                </a>
+              </div>
             </div>
+
+
+
+
+            <div className="text-grey-dark mt-6">
+              Already have an account?
+              <Link className="no-underline border-b border-blue text-blue" to="/login">
+                Log in
+              </Link>.
+            </div>
+          </div>
         </div>
-      
-     
 
 
 
-    </form>
+
+
+      </form>
 
     </>
 
   );
 }
 
-export default SignUp;
+export default SignUP;

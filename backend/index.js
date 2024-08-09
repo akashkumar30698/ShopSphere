@@ -1,33 +1,49 @@
 const express = require("express")
 const app = express()
 const {router: userAuth }= require("./routes/userAuth");
-const cors = require("cors");
+const cors = require('cors');
 const { connectToDB } = require("./connectToDB")
+const {router : forgetPassword} = require("./routes/forgetPassword")
 const { router: home } = require("./routes/userAuth")
 require("dotenv").config()
 
 
 const PORT =  8000
 
+// Middleware to set Cross-Origin-Opener-Policy
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+})
+
+
+
+
+
 
 
 
 
 //CORS
-let whitelist = ['http://localhost:5173']
+const allowedOrigins = [
+  'http://localhost:5173',
+   // Add all potential front-end URLs
+];
 
 
-let corsOptions = {
+const corsOptions = {
   origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'))
+      callback(new Error('Not allowed by CORS'));
     }
-  }
-}
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+};
 
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 
 
 
@@ -36,6 +52,8 @@ app.use(cors(corsOptions))
 // Middleware to parse frontend data (Body)
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+
 
 //MongoDB connection
 connectToDB("mongodb://localhost:27017/e-commerce")
@@ -48,9 +66,14 @@ connectToDB("mongodb://localhost:27017/e-commerce")
 
 
 
+
+
 app.use("/",home)
 
 app.use("/",userAuth)
+
+app.use("/",forgetPassword)
+
 
 
 

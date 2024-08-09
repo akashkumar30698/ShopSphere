@@ -24,9 +24,16 @@ router.post("/signUP",handleUserSignUP)
 
     
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+  
+/* VENDOR ROUTES */
+
+//Login
+router.post("/vendor/login",handleUserLogin)
 
 
-
+//SignUP
+router.post("/vendor/signUP",handleUserSignUP)
 
 
 
