@@ -1,7 +1,8 @@
 const { newUser } = require("../model/userAuth")
 const bcrypt = require("bcrypt")
-
-
+const jwt = require("jsonwebtoken")
+const { io } = require("../socketConnect")
+require("dotenv").config()
 
 
 //Login
@@ -17,68 +18,275 @@ async function handleUserLogin(req, res) {
     const googleEmailExist = await newUser.findOne({email: googleEmail })
   
     if(googleEmailExist){
-     return res.json("failure")
+
+      
+      
+                
+       //Token Validations
+       const accessToken = generateAccessToken({ name: googleEmailExist.name, email: googleEmailExist.email});
+       const refreshToken = jwt.sign({ name: googleEmailExist.name, email: googleEmailExist.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
+    
+
+          /*
+       const options = {
+        httpOnly: true,
+        secure: process.env.COOKIE_SECURE,
+        sameSite: 'None',
+        maxAge: 10 * 60 * 1000,  
+       };
+
+        */
+
+
+        const userId = googleEmailExist._id
+
+
+
+       res.cookie("accessToken",accessToken)
+   
+
+       return res.json({
+       message: "success",
+       accessToken: accessToken,
+       refreshToken: refreshToken,
+       params:userId
+       })
+
+    
     }
   
-    const saltrounds = 10
-    const auth = process.env.GOOGLE_AUTH
-    const hashedPassword = await bcrypt.hash(auth, saltrounds)
+     const saltrounds = 10
+     const auth = process.env.GOOGLE_AUTH
+     const hashedPassword = await bcrypt.hash(auth, saltrounds)
   
-    const newUserData = {
-     name: given_name,
-     email: googleEmail,
-     password : hashedPassword,
-     picture: picture
-    }
+
+      const googleAuthUser =  await newUser.create({
+        name: given_name,
+        email: googleEmail,
+        password : hashedPassword,
+        picture: picture
+ 
+      })
+     
+
+       
 
 
-     delete newUserData.gst
-     const googleAuthUser = new newUser(newUserData)
-     await googleAuthUser.save()  
 
-     return res.json("success")
+     
+
+
+     //Token Validations
+     const accessToken = generateAccessToken({ name: googleAuthUser.name,email: googleAuthUser.email});
+     const refreshToken = jwt.sign({ name: googleAuthUser.name,email: googleAuthUser.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
+    
+
+
+
+     /*
+     const options = {
+      httpOnly: true,
+      secure: process.env.COOKIE_SECURE,
+      sameSite: 'None',
+      maxAge: 10 * 60 * 1000,  
+     };
+
+     */
+
+
+     const userIdAuth = googleAuthUser._id
+
+     res.cookie("accessToken",accessToken)
+   
+
+     return res.json({
+      message: "success",
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      params: userIdAuth
+     })
+              
+
+
 
    }
 
    else{
+
+
     //Regular login
     const { email, password } = req.body
     const findEmail = await newUser.findOne({email})
 
      if(!findEmail || findEmail == null){
-      return res.json("failure")
+      return res.sendStatus(401).json("failure")
      }
      
      const hashedPassword = findEmail.password
 
 
-    const match = await bcrypt.compare(password,hashedPassword)
+     const match = await bcrypt.compare(password,hashedPassword)
 
-    if(!match || match == null){
-      return res.json("failure")
-    }
+     if(!match || match == null){
+       throw new ApiError(403).json("failure")
+     }
+
+          //Token Validations
+          const accessToken = generateAccessToken({ name: findEmail.name,email: findEmail.email});
+          const refreshToken = jwt.sign({ name: findEmail.name,email: findEmail.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
+         
+     
+          
 
 
-    return res.json("success")
+
+     /*
+     const options = {
+      httpOnly: true,
+      secure: process.env.COOKIE_SECURE,
+      sameSite: 'None',
+      maxAge: 10 * 60 * 1000,  
+     };
+
+     */
 
 
+     
+       res.cookie("accessToken",accessToken)
 
+
+       const regularUserId = findEmail._id
+  
+
+
+       const findGst =  findEmail.gst || {}
+        
+
+       // Sending Additional details to frontend If role == 'VENDOR'
+       if(findGst || findEmail != null){
+         return res.json({
+          message: "success",
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          params: regularUserId,
+          gst: findEmail.gst,
+          name:findEmail.name,
+          email: findEmail.email
+          })
+                 
+
+       }
+      
+        return res.json({
+        message: "success",
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        params: regularUserId
+        })
+              
+     
    }
 
 
 
   
- }catch(err){
+ }
+ catch(err){
   console.log("Oops some error occured",err)
  }
+ 
+}
+
+
+
+
+//Refresh Endpoint
+
+async function handleRefresh(req,res){
+
+  const {googleAuthName,googleAuthEmail,isGoogleAuth,refreshToken} = req.body
+
+  if(isGoogleAuth == true){
+
+    //Verify Refersh Token
+    jwt.verify(refreshToken,`${process.env.REFRESH_SECRET_TOKEN}`, (err, user) => {
+      if (err) return res.sendStatus(403).json("failure");
+      console.log(user)
+      const accessToken = generateAccessToken({name : googleAuthName,
+                                            email : googleAuthEmail});
+  
+     /*
+     const options = {
+      httpOnly: true,
+      secure: process.env.COOKIE_SECURE,
+      sameSite: 'None',
+      maxAge: 10 * 60 * 1000,  
+     };
+
+     */
+
+
+    res.cookie("accessToken",accessToken)
+
 
  
-
-
-
-
+    return res.json({
+      message: "success",
+      accessToken: accessToken,
+     })
+              
+    })
   
+  }else{
+
+    const {name,email,refreshToken} = req.body
+
+       //Verify Refersh Token
+
+       jwt.verify(refreshToken,`${process.env.REFRESH_SECRET_TOKEN}`,(err,user)=>{
+           if(err) return res.sendStatus(403).json('failure');
+
+              const accessToken = generateAccessToken({name : name,
+              email : email})
+    
+
+
+
+     /*
+     const options = {
+      httpOnly: true,
+      secure: process.env.COOKIE_SECURE,
+      sameSite: 'None',
+      maxAge: 10 * 60 * 1000,  
+     };
+
+     */
+
+
+              res.cookie("accessToken",accessToken)
+        
+          
+             return res.json({
+              message: "success",
+              accessToken: accessToken,
+              })
+   })
+       
+  }
+
+
 }
+
+
+
+
+//Generate Access Token
+const generateAccessToken = (user) => {
+  return jwt.sign(user,`${process.env.ACCESS_SECRET_TOKEN}`, { expiresIn: '10m' });
+};
+
+
+
 
 //Sign UP
 async function handleUserSignUP(req, res) {
@@ -86,35 +294,37 @@ async function handleUserSignUP(req, res) {
 
   try {
 
-
-    //Google Sign UP
-    const { given_name, googleEmail, picture, isGoogleAuth } = req.body
-    const googleEmailExist = await newUser.findOne({email: googleEmail })
-
-
     // Vendor SignUp
-    const { gst,name, email, password, role, isApproved } = req.body
+    const { gst,name, email, password, role } = req.body
 
 
+    if ( role == 'VENDOR') {
 
-    if (isApproved == true && role == 'VENDOR') {
+        const vendorExist = await newUser.findOne({ email })
+
+        if(vendorExist){
+          return res.sendStatus(401).json("failure")
+        }
+
 
        const saltrounds = 10
        const hashedPassword = await bcrypt.hash(password,saltrounds)
 
-      const newVendorData = {
-        name:name,
-        email:email,
-        password:hashedPassword,
-        role:role
-      };
+        await newUser.create({
+          name:name,
+          email:email,
+          password:hashedPassword,
+          role:role,
+          gst:gst
+        
+        })
 
-      newVendorData.gst = gst
-      const vendor = new newUser(newVendorData)
-      
-      await vendor.save()
+        io.emit("message",newUser)
+
 
       return res.json("success")
+
+      
 
     }
 
@@ -123,44 +333,16 @@ async function handleUserSignUP(req, res) {
 
 
     else {
-
-
-      if (googleEmailExist) {
-        return res.json("User already exist")
-      }
-
-
-
-      if (isGoogleAuth == true) {
-
-        const saltrounds = 10
-        const auth = process.env.GOOGLE_AUTH
-        const hashedPassword = await bcrypt.hash(auth, saltrounds)
-
-
-        const newUserData = {
-          name:given_name,
-          email:googleEmail,
-          password: hashedPassword,
-          picture:picture
-        }
- 
-        delete newUserData.gst
-         const user =  new newUser(newUserData)
-         await user.save()
-
-        return res.json("success");
-
-
-      }
-
-      else if (isGoogleAuth == false || isGoogleAuth == null || !isGoogleAuth) {
+    
 
         const { name, email, password } = req.body
         const userExist = await newUser.findOne({ email })
 
         if (userExist) {
-          return res.json("user already exists")
+          return res.sendStatus(401).json({
+            message : "already-exists"
+          })
+          
         }
 
 
@@ -168,25 +350,24 @@ async function handleUserSignUP(req, res) {
         const hashedPassword = await bcrypt.hash(password, saltrounds)
 
 
-        const newRegularUserData = {
+         await newUser.create({
           name:name,
           email:email,
           password: hashedPassword,
-        }
- 
-           delete newRegularUserData.gst
-           const regularUser =  new newUser(newRegularUserData)
-           await regularUser.save()
+        
+         })
+
+      
+           return res.json("success")
 
 
-        return res.json("success")
-
-      }
+      
     }
 
 
 
   }
+
   catch (err) {
     console.log("Some error occured at userAuth.js", err)
   }
@@ -201,4 +382,6 @@ async function handleUserSignUP(req, res) {
 module.exports = {
   handleUserLogin,
   handleUserSignUP,
+  handleRefresh,
+  generateAccessToken,
 }

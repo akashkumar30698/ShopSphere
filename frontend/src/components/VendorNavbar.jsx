@@ -1,18 +1,18 @@
 import "../index.css";
 import React, { useEffect } from "react";
-import { Link ,useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { useLogin } from "../ContextApi/loginContext.jsx"
 import Cookies from "js-cookie"
 
 
-function Navbar() {
+function VendorNavbar() {
 
     const { isLoggedIn, setIsLoggedIn } = useLogin()
     const navigate = useNavigate()
 
      const handleLogoutClick = () => {
         setIsLoggedIn(false);
-      
+     
         Cookies.remove("accessToken", { path: "/" });
         navigate("/")
     
@@ -24,9 +24,13 @@ function Navbar() {
            if(getCookie || getCookie != null){
                   setIsLoggedIn(true)
            }
+
            else if(!getCookie || getCookie == null){
+
             navigate("/")
+
            }
+            
             
      },[isLoggedIn])
 
@@ -68,6 +72,21 @@ function Navbar() {
                                     Sell
                                 </Link>
                             </li>
+
+                            <li className="shrink-0">
+                                <Link
+                                    to="/:userId/vendor/Approvals"
+                                    title=""
+                                    className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
+                                >
+                                    Approvals
+                                </Link>
+                            </li>
+
+
+
+
+
                         </ul>
                     </div>
                     {isLoggedIn ? (
@@ -97,9 +116,7 @@ function Navbar() {
 
 
                                 <button id="myCartDropdownButton1" data-dropdown-toggle="myCartDropdown1" type="button" className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
-
                                     <span className="hidden sm:flex"><Link to="/login">Login</Link></span>
-
                                 </button>
 
                             </div>
@@ -113,4 +130,4 @@ function Navbar() {
     );
 }
 
-export default Navbar;
+export default VendorNavbar;

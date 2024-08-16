@@ -25,8 +25,18 @@ const user = new mongoose.Schema({
         type : String,
         default :"https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar.png",
     },
-   
-
+    gst: {  
+        type: String,
+        required: function() {
+            return this.role == 'VENDOR';  // Make gst required only if the role is VENDOR
+        },
+        default: "",  
+    },
+    status: {
+        type: String,
+        enum: ["Pending","Approved","Rejected"],
+        default: "Pending",
+    }
 
 },
 {

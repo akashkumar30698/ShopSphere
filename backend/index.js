@@ -1,25 +1,22 @@
-const express = require("express")
-const app = express()
+const { io,server,app,express } = require("./socketConnect.js")
 const {router: userAuth }= require("./routes/userAuth");
 const cors = require('cors');
 const { connectToDB } = require("./connectToDB")
 const {router : forgetPassword} = require("./routes/forgetPassword")
 const { router: home } = require("./routes/userAuth")
+const {router : admin } = require("./routes/adminAuth.js")
 require("dotenv").config()
 
 
 const PORT =  8000
 
-// Middleware to set Cross-Origin-Opener-Policy
-app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-  next();
-})
 
 
-
-
-
+ // Middleware to set Cross-Origin-Opener-Policy
+   app.use((req, res, next) => {
+    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+    next();
+   })
 
 
 
@@ -74,11 +71,21 @@ app.use("/",userAuth)
 
 app.use("/",forgetPassword)
 
+//Admin
+app.use("/",admin)
 
 
 
 
 
-app.listen(PORT,()=>{
+
+
+
+
+
+
+server.listen(PORT,()=>{
     console.log(`Server started at http://localhost:${PORT}`)
 })
+
+

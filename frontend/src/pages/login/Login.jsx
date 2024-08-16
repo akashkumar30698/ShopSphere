@@ -1,34 +1,40 @@
 import { Link,useNavigate } from "react-router-dom"
-import React,{useState} from "react"
+import React,{useEffect, useState} from "react"
 import "../../App.css"
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
-
-
+import Cookies from "js-cookie"
+import { useLogin } from "../../ContextApi/loginContext.jsx"
+import { useAuthContext } from "../../ContextApi/authProvider.jsx";
 
 function Login() {
-   const [formData,setFormData] = useState({
-    email: "",
-    password: "",
-   })
-  const [isGoogleAuth,setIsGoogleAuth] = useState(true)
+
   const navigate = useNavigate()
-const [checkExists,setCheckExists] = useState(false)
+  const [checkExists,setCheckExists] = useState(false)
+
+  const { isLoggedIn,setIsLoggedIn } = useLogin()
+
+   const {isGoogleAuth,formData, setRefreshToken,setCheckCookie,setGoogleFormData,setFormData ,setIsGoogleAuth} = useAuthContext()
+     
 
 
 
-
-    const handleSuccess = async (res) => {
+     const handleSuccess = async (res) => {
      
         const userDetails = jwtDecode(res.credential)
         const {given_name, email ,picture} = userDetails
+          
+    
+         setGoogleFormData({
+            googleAuthName:given_name,
+            googleAuthEmail: email
+         })
 
-         
         try{
              
-
             const res = await fetch(`${import.meta.env.VITE_APP_URL}/login`, {
                 method: 'POST',
+                credentials:'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     given_name: given_name,
@@ -43,12 +49,21 @@ const [checkExists,setCheckExists] = useState(false)
 
             const data = await res.json()
 
-            if(data == 'success'){
-                navigate("/")
+            if(data.message == 'success'){
+                navigate(`/${data.params}`)
+
+                const cookie = Cookies.get("accessToken",data.accessToken)
+
+
+                setRefreshToken(data.refreshToken)
+                setCheckCookie(cookie)
+                setIsLoggedIn(true)
+
                 setCheckExists(false)
             }
             else if(data == 'failure'){
                 setCheckExists(true)
+                setIsLoggedIn(false)
             }
            }
 
@@ -64,9 +79,9 @@ const [checkExists,setCheckExists] = useState(false)
 
 
 
-      const handleError = (err) => {
-       console.log("Error logging in:",err)
-      }
+       const handleError = (err) => {
+         console.log("Error logging in:",err)
+        }
 
       const handleChange = (e) => {
            setFormData({...formData,[e.target.name]: e.target.value })
@@ -81,14 +96,25 @@ const [checkExists,setCheckExists] = useState(false)
             try{
                 const res = await fetch(`${import.meta.env.VITE_APP_URL}/login`, {
                     method: 'POST',
+                    credentials:'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
                   });  
                   
                     if(res.ok){
                         const data = await res.json()
-                        if(data == 'success'){
-                               navigate("/")
+                        if(data.message == 'success'){
+                               navigate(`/${data.params}`)
+                               const cookie = Cookies.get("accessToken",data.accessToken)
+                        
+
+                               setRefreshToken(data.refreshToken)
+                               setIsLoggedIn(true)
+                               setCheckCookie(cookie)
+                   
+                        }
+                        else{
+                            setIsLoggedIn(false)
                         }
                     }
 

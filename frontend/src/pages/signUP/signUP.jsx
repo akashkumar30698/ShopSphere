@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode }  from "jwt-decode";
+
 
 
 function SignUP() {
@@ -9,7 +8,7 @@ function SignUP() {
   const [check, setCheck] = useState(null)
   const [loading, setLoading] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
-  const [isGoogleAuth, setIsGoogleAuth] = useState(false)
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -99,51 +98,6 @@ function SignUP() {
   };
 
 
-  //Google Sign UP
-  const handleSuccess = async (res) => {
-    const userDetails = jwtDecode(res.crediential)
-    const { given_name, email, picture } = userDetails
-
-    setIsGoogleAuth(true)
-    try {
-
-
-      const res = await fetch(`${import.meta.env.VITE_APP_URL}/signUP`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          given_name: given_name,
-          googleEmail: email,
-          picture: picture,
-          isGoogleAuth: isGoogleAuth
-        }),
-      });
-
-
-      if (res.ok) {
-
-        const data = await res.json()
-
-        if (data == 'success') {
-          navigate("/")
-        }
-      }
-
-
-
-    } catch (err) {
-      console.log("Error at login.jsx", err)
-    } finally {
-      setIsGoogleAuth(false)
-    }
-
-  }
-
- const handleError = () =>{
-     console.log("Some error occured while signing UP with google",err)
- }
-
-
 
 
 
@@ -183,13 +137,6 @@ function SignUP() {
               {passwordError && <p className="text-red-700">Password must contain Uppercase,lowercase,special char and numbers</p>}
 
               {check && <p className=" mt-6" id="color"  >User already exists</p>}
-
-
-              <GoogleLogin
-                onSuccess={handleSuccess}
-                onError={handleError}
-              />
-
 
 
               <button
