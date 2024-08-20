@@ -4,21 +4,19 @@ import "../../App.css";
 import { useLogin } from "../../ContextApi/loginContext";
 import Cookies from "js-cookie";
 import  RequestStatus  from "../../requestStatus/requestStatus";
-import  RequestDetails  from "../../requestStatus/requestDetails";
-
 import { useAuthContext } from "../../ContextApi/authProvider";
 
 function VendorLogin() {
   const navigate = useNavigate();
   const { setFormData, setCheckCookie, setRefreshToken, formData } = useAuthContext();
-
+  const [invalidCredentials,setInvalidCredentials] = useState(false)
   const [isRequested, setIsRequested] = useState(false);
-
+  const [wrongPassword,setWrongPassword] = useState(false)
   const [sendRequestToAdmin, setSendRequestToAdmin] = useState(false);
-  const [isApprovedByAdmin, setIsApprovedByAdmin] = useState(false);
+  
   const { isLoggedIn, setIsLoggedIn } = useLogin();
 
- // const socket = io(`${import.meta.env.VITE_SOCKET_URL}`);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,11 +26,6 @@ function VendorLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    
-  
-
-
-
     try {
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/vendor/login`, {
         method: "POST",
@@ -44,8 +37,9 @@ function VendorLogin() {
       if (res.ok) {
         const data = await res.json();
 
-        if (data.message === "success") {
+        if (data.message === "vendor") {
           navigate(`/${data.params}/vendor`);
+
           Cookies.set("accessToken", data.accessToken);
 
           setRefreshToken(data.refreshToken);
@@ -53,15 +47,21 @@ function VendorLogin() {
           setCheckCookie(Cookies.get("accessToken"));
 
           setIsRequested(true);
-          socket.disconnect()
-
+          setWrongPassword(false)
+          
           setSendRequestToAdmin(true);
 
         
-        } else {
-          resetForm();
+        } 
      
-        }
+        
+      }else if(res.status === 403){
+        setWrongPassword(true)
+        resetForm();
+   
+      }
+      else if(res.status === 401){
+        setExists(true)
       }
     } catch (err) {
       resetForm();
@@ -73,17 +73,11 @@ function VendorLogin() {
   const resetForm = () => {
     setIsLoggedIn(false);
     setIsRequested(false);
-    setGst(null);
-    setName(null);
-    setEmail(null);
-    setId(null);
+  
     setSendRequestToAdmin(false);
   };
 
 
-  useEffect(()=>{
-    
-  },[])
 
   
 
@@ -128,6 +122,8 @@ function VendorLogin() {
                   />
                 </div>
 
+                {wrongPassword && <p className="text-red-700">Invalid Email or Password</p>}
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">
                     <div className="flex items-center h-5">
@@ -170,7 +166,7 @@ function VendorLogin() {
 
       {/* Others */}
       <RequestStatus isRequested={isRequested} />
-
+    
 
     </>
   );

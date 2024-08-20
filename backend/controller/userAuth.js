@@ -4,6 +4,11 @@ const jwt = require("jsonwebtoken")
 const { io } = require("../socketConnect")
 require("dotenv").config()
 
+let initialVendorStatus = ""
+
+
+
+
 
 //Login
 async function handleUserLogin(req, res) {
@@ -18,10 +23,7 @@ async function handleUserLogin(req, res) {
     const googleEmailExist = await newUser.findOne({email: googleEmail })
   
     if(googleEmailExist){
-
-      
-      
-                
+           
        //Token Validations
        const accessToken = generateAccessToken({ name: googleEmailExist.name, email: googleEmailExist.email});
        const refreshToken = jwt.sign({ name: googleEmailExist.name, email: googleEmailExist.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
@@ -40,11 +42,8 @@ async function handleUserLogin(req, res) {
 
         const userId = googleEmailExist._id
 
-
-
-       res.cookie("accessToken",accessToken)
+        res.cookie("accessToken",accessToken)
    
-
        return res.json({
        message: "success",
        accessToken: accessToken,
@@ -67,12 +66,6 @@ async function handleUserLogin(req, res) {
         picture: picture
  
       })
-     
-
-       
-
-
-
      
 
 
@@ -98,17 +91,13 @@ async function handleUserLogin(req, res) {
 
      res.cookie("accessToken",accessToken)
    
-
-     return res.json({
+      return res.json({
       message: "success",
       accessToken: accessToken,
       refreshToken: refreshToken,
       params: userIdAuth
      })
               
-
-
-
    }
 
    else{
@@ -128,18 +117,19 @@ async function handleUserLogin(req, res) {
      const match = await bcrypt.compare(password,hashedPassword)
 
      if(!match || match == null){
-       throw new ApiError(403).json("failure")
+      return res.sendStatus(403).json("failure")
      }
+
+
+        initialVendorStatus = findEmail.status
+
+        
 
           //Token Validations
           const accessToken = generateAccessToken({ name: findEmail.name,email: findEmail.email});
           const refreshToken = jwt.sign({ name: findEmail.name,email: findEmail.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
          
      
-          
-
-
-
      /*
      const options = {
       httpOnly: true,
@@ -154,27 +144,21 @@ async function handleUserLogin(req, res) {
      
        res.cookie("accessToken",accessToken)
 
-
        const regularUserId = findEmail._id
   
-
-
        const findGst =  findEmail.gst || {}
         
 
        // Sending Additional details to frontend If role == 'VENDOR'
        if(findGst || findEmail != null){
+        
          return res.json({
-          message: "success",
+          message: "vendor",
           accessToken: accessToken,
           refreshToken: refreshToken,
-          params: regularUserId,
-          gst: findEmail.gst,
-          name:findEmail.name,
-          email: findEmail.email
+          params: regularUserId, 
           })
                  
-
        }
       
         return res.json({
@@ -250,8 +234,6 @@ async function handleRefresh(req,res){
               email : email})
     
 
-
-
      /*
      const options = {
       httpOnly: true,
@@ -262,10 +244,8 @@ async function handleRefresh(req,res){
 
      */
 
-
               res.cookie("accessToken",accessToken)
-        
-          
+                
              return res.json({
               message: "success",
               accessToken: accessToken,
@@ -310,21 +290,20 @@ async function handleUserSignUP(req, res) {
        const saltrounds = 10
        const hashedPassword = await bcrypt.hash(password,saltrounds)
 
-        await newUser.create({
+        const user =   await newUser.create({
           name:name,
           email:email,
           password:hashedPassword,
           role:role,
           gst:gst
-        
         })
 
-        io.emit("message",newUser)
+        initialVendorStatus = user.status
+
+        io.emit("message",user)
 
 
       return res.json("success")
-
-      
 
     }
 
@@ -345,37 +324,33 @@ async function handleUserSignUP(req, res) {
           
         }
 
-
         const saltrounds = 10
         const hashedPassword = await bcrypt.hash(password, saltrounds)
-
 
          await newUser.create({
           name:name,
           email:email,
-          password: hashedPassword,
-        
+          password: hashedPassword,     
          })
 
-      
-           return res.json("success")
-
-
-      
+           return res.json("success")   
     }
-
-
-
   }
 
   catch (err) {
     console.log("Some error occured at userAuth.js", err)
   }
 
-
-
-
 }
+
+
+
+function VendorInitialStatus(){
+  return initialVendorStatus
+}
+
+
+
 
 
 
@@ -384,4 +359,6 @@ module.exports = {
   handleUserSignUP,
   handleRefresh,
   generateAccessToken,
+  VendorInitialStatus,
+
 }

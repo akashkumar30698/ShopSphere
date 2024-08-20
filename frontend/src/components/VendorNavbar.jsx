@@ -1,6 +1,6 @@
 import "../index.css";
 import React, { useEffect } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link,useNavigate, useParams } from "react-router-dom";
 import { useLogin } from "../ContextApi/loginContext.jsx"
 import Cookies from "js-cookie"
 
@@ -9,6 +9,9 @@ function VendorNavbar() {
 
     const { isLoggedIn, setIsLoggedIn } = useLogin()
     const navigate = useNavigate()
+    const id= useParams()
+    const userId = id.userId 
+
 
      const handleLogoutClick = () => {
         setIsLoggedIn(false);
@@ -30,6 +33,8 @@ function VendorNavbar() {
             navigate("/")
 
            }
+
+       
             
             
      },[isLoggedIn])
@@ -54,18 +59,18 @@ function VendorNavbar() {
                             </li>
                             <li className="shrink-0">
                                 <Link
-                                    to="/vendor"
+                                    to={userId? `/${userId}/vendor/Your-Products` : `/vendor/Your-Products`}
                                     title=""
                                     className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
                                 >
-                                    Best Sellers
+                                    Your Products
                                 </Link>
                             </li>
 
 
                             <li className="shrink-0">
                                 <Link
-                                    to="#"
+                                    to={userId ? `/${userId}/vendor/sell` : `/vendor/sell`}
                                     title=""
                                     className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
                                 >
@@ -75,7 +80,7 @@ function VendorNavbar() {
 
                             <li className="shrink-0">
                                 <Link
-                                    to="/:userId/vendor/Approvals"
+                                    to={userId? `/${userId}/vendor/approvals` : `/vendor/approvals`}
                                     title=""
                                     className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
                                 >

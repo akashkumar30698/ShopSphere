@@ -3,39 +3,40 @@ import Admin from "../../components/admin";
 import Cookies from "js-cookie";
 import io from "socket.io-client";
 
-
-
- // Setup the socket connection
-const socket = io(import.meta.env.VITE_APP_URL, {
-  withCredentials: true,
-  transports: ['websocket'], // Ensure you're using WebSocket transport
-});
-
-
-
-
-
 function VendorRequests() {
   const [isRequestedCheck, setIsRequestedCheck] = useState(false);
   const [details, setDetails] = useState([]);
-
+  
   
 
 
   useEffect(() => {
     fetchVendorDetails();
-
-    // Listen for real-time updates from the server
-    socket.on("approvalStatus", (status) => {
-      console.log("Received approval status update:", status);
-      fetchVendorDetails(); // Fetch updated details from server
+    const socket = io(import.meta.env.VITE_APP_URL, {
+      withCredentials: true,
+      transports: ['websocket'], 
     });
 
-    // Clean up the socket connection when the component unmounts
-    return () => {
-      socket.off("approvalStatus");
-    };
 
+    socket.on("connect",()=>{
+      console.log("A user connected")
+    })
+
+    socket.on("message",(data)=>{
+      console.log(data)
+      setDetails((prevDetails)=>{
+          return [...prevDetails,data]
+      })
+    })
+    
+    
+     socket.on("disconnect",()=>{
+      console.log("User disconnected")
+     })
+
+    return ()=>{
+      socket.disconnect()
+    }
 
   }, []);
 
@@ -45,6 +46,8 @@ function VendorRequests() {
     if (!token) {
       return null;
     }
+
+  
 
     try {
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/getVendors`, {
@@ -67,13 +70,29 @@ function VendorRequests() {
   };
 
   const updateVendorStatus = async (id, status) => {
+
+          //Send the status to vendor
+          const socket = io(`${import.meta.env.VITE_APP_URL}`)
+
+
     try {
       const token = Cookies.get("accessToken");
   
       if (!token) {
         return;
       }
-  
+      
+               
+      socket.on("connect",()=>{
+          console.log("a user connected")
+      })
+ 
+ 
+      socket.on("disconnect",()=>{
+       console.log("user disconnected")
+      })
+
+      
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/updateVendorStatus/?id=${id}`, {
         method: "PUT",
         credentials: "include",
@@ -86,16 +105,24 @@ function VendorRequests() {
   
       if (res.ok) {
         
-        setDetails((prevDetails) =>
+        const updateVendor = await res.json()
+         setDetails((prevDetails) =>
           prevDetails.map((detail) =>
             detail._id === id ? { ...detail, status } : detail
           )
-        );
+         );
+
+         socket.disconnect()   
+
+        
+
       } else {
         console.log("Failed to update vendor status");
       }
     } catch (err) {
       console.log("Some error occurred", err);
+    }finally{
+      socket.disconnect()
     }
   };
   

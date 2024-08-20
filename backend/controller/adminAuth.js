@@ -1,8 +1,16 @@
 const { newUser } = require("../model/userAuth")
 const { generateAccessToken } = require("./userAuth")
 const jwt = require("jsonwebtoken")
-//const { io } = require("../index.js")
+const { io } = require("../socketConnect")
+const { VendorInitialStatus } = require("./userAuth")
 require("dotenv").config()
+
+
+
+let updatedVendorStatus = ""
+
+
+
 
 async function handleAdminLogin (req,res){
     try{
@@ -26,10 +34,6 @@ async function handleAdminLogin (req,res){
        };
 
         */
-
-
-    
-
 
 
        res.cookie("accessToken",accessToken)
@@ -61,16 +65,13 @@ async function handleGetVendors(req,res){
     try{
        const getVendors = await newUser.find({role: "VENDOR"})
 
-
-        
-
-
        if(!getVendors || getVendors == undefined || getVendors.length == 0){
         return res.json({
             message:"failure"
         })
        }
        
+
 
        return res.json({
         getVendors
@@ -80,6 +81,8 @@ async function handleGetVendors(req,res){
         console.log("Some error occured",err)
      }
 }
+
+
 
 async function handleUpdateVendorStatus(req,res){
     
@@ -99,9 +102,12 @@ async function handleUpdateVendorStatus(req,res){
       if (!updatedVendor) {
         return res.status(404).json({ message: "Vendor not found" });
       }
-      console.log(io)
 
-    ///  io.emit("approvalStatus",updatedVendor.status)
+
+      updatedVendorStatus = updatedVendor.status
+      
+      //sending approval status to vendor(frontend)
+      io.emit("approvalStatus",updatedVendor)
   
     return  res.json({ message: "Vendor status updated",  updatedVendor });
     } catch (error) {
@@ -112,7 +118,38 @@ async function handleUpdateVendorStatus(req,res){
 
 }
 
+async function handleGetLatestVendorStatus(req,res){
 
+      try{
+       const userId = req.query.userId  
+       let initialVendorStatus = VendorInitialStatus()
+ 
+
+      if(initialVendorStatus === "" || initialVendorStatus === null){
+           const refreshedStatus =  await newUser.findById(userId)
+           const passToFrontend = refreshedStatus?.status
+  
+         return res.json({
+          initialVendorStatus: passToFrontend,
+          updatedVendorStatus: updatedVendorStatus,
+        })
+
+    }
+    
+
+    return res.json({
+      initialVendorStatus: initialVendorStatus,
+      updatedVendorStatus: updatedVendorStatus,
+    })
+
+
+      } catch(err){
+        console.log("Some error occured",err)
+      }
+
+
+  
+}
 
 
 
@@ -120,5 +157,6 @@ async function handleUpdateVendorStatus(req,res){
 module.exports = {
     handleAdminLogin,
     handleGetVendors,
-    handleUpdateVendorStatus
+    handleUpdateVendorStatus,
+    handleGetLatestVendorStatus,
 }

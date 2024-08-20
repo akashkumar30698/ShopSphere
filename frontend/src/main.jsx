@@ -20,6 +20,9 @@ import { LoginProvider } from './ContextApi/loginContext.jsx'
 import  VendorNavbar  from './components/VendorNavbar.jsx'
 import {  AuthProvider } from './ContextApi/authProvider.jsx'
 import VendorRequests from './pages/admin/vendorRequests.jsx'
+import  VendorSell  from  "./pages/vendor/vendorSell.jsx"
+import VendorProductDetail from './pages/vendor/vendorProductDetail.jsx'
+import VendorProducts from './pages/vendor/vendorProducts.jsx'
 
 /*
  HOW TO ADD GOOGLE AUTH?
@@ -60,6 +63,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
              {/* VENDOR ROUTES */}
              <Route path="/">
              <Route path="/:userId/vendor" element={<VendorNavbar/>} />
+             <Route path="/:userId/vendor/approvals" element={<VendorSell/>} />
+             <Route path="/:userId/vendor/sell" element={<VendorProductDetail/>}  />
+             <Route path="/:userId/vendor/Your-Products" element={<VendorProducts/>} />
             </Route>
 
 

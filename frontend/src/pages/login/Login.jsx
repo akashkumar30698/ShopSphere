@@ -11,7 +11,7 @@ function Login() {
 
   const navigate = useNavigate()
   const [checkExists,setCheckExists] = useState(false)
-
+  const [invalidCredentials,setInvalidCredentials] = useState(false)
   const { isLoggedIn,setIsLoggedIn } = useLogin()
 
    const {isGoogleAuth,formData, setRefreshToken,setCheckCookie,setGoogleFormData,setFormData ,setIsGoogleAuth} = useAuthContext()
@@ -58,13 +58,20 @@ function Login() {
                 setRefreshToken(data.refreshToken)
                 setCheckCookie(cookie)
                 setIsLoggedIn(true)
-
                 setCheckExists(false)
+                setInvalidCredentials(false)
+
             }
-            else if(data == 'failure'){
-                setCheckExists(true)
-                setIsLoggedIn(false)
-            }
+          
+           }else if(res.status === 401){
+            setCheckExists(true)
+            setIsLoggedIn(false)
+            setInvalidCredentials(false)
+           }
+           else if(res.status === 403){
+            setIsLoggedIn(false)
+            setCheckExists(false)
+            setInvalidCredentials(true)
            }
 
 
@@ -157,14 +164,14 @@ function Login() {
                                     <Link to="/ForgetPassword" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</Link>
                                 </div>
 
-                        
+                                {invalidCredentials && <p className="text-red-700">User Already Exists</p>}
                                  {checkExists && <p className="text-red-700">User Already Exists</p>}
                                 <GoogleLogin
                                     onSuccess={handleSuccess}
                                     onError={handleError}
                                 />
 
-
+                           
 
 
                                 <button type="submit" className="w-full black text-white bg-black-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-black-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
