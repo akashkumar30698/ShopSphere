@@ -55,7 +55,7 @@ export default function Example() {
 
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
-              <img style={{
+            <img style={{
                 display: "block", WebkitUserSelect: "none", margin: "auto",
                 cursor: "zoom-in",
                 backgroundColor: "rgb(111 97 97 / 0%)", transition: "background-color 300ms"
@@ -83,17 +83,17 @@ export default function Example() {
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 
 
-            {/* Profile dropdown */}
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                  <span className="sr-only">Open user menu</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user text-white">
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </MenuButton>
-              </div>
+             {/* Profile dropdown */}
+             <Menu as="div" className="relative ml-3">
+               <div>
+                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                   <span className="sr-only">Open user menu</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user text-white">
+                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                         <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                  </MenuButton>
+               </div>
 
 
               {isLoggedIn && (
@@ -110,7 +110,7 @@ export default function Example() {
                 </MenuItems>
 
               )}
-
+              
             </Menu>
           </div>
         </div>
@@ -125,8 +125,8 @@ export default function Example() {
 
             <DisclosureButton
               key={item.name}
-              as={Link}
-              to={item.to}  // Corrected from href={item.href} to to={item.to}
+              as="a"
+              href={item.href}
               aria-current={item.current ? 'page' : undefined}
               className={classNames(
                 item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
