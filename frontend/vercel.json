@@ -1,0 +1,101 @@
+{
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/login",
+        "destination": "/login",
+        "statusCode": 200
+      },
+      {
+        "source": "/signUP",
+        "destination": "/signUP",
+        "statusCode": 200
+      },
+      {
+        "source": "/ForgetPassword",
+        "destination": "/ForgetPassword",
+        "statusCode": 200
+      },
+      {
+        "source": "/ResetPassword",
+        "destination": "/ResetPassword",
+        "statusCode": 200
+      },
+      {
+        "source": "/validateOTP",
+        "destination": "/validateOTP",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/vendor",
+        "destination": "/:userId/vendor",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/vendor/sell",
+        "destination": "/:userId/vendor/sell",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/vendor/Your-Products",
+        "destination": "/:userId/vendor/Your-Products",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/admin",
+        "destination": "/:userId/admin",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/paymentSuccess",
+        "destination": "/:userId/paymentSuccess",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/cartPage",
+        "destination": "/:userId/cartPage",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/address",
+        "destination": "/:userId/address",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/yourOrders",
+        "destination": "/:userId/yourOrders",
+        "statusCode": 200
+      },
+      {
+        "source": "/error",
+        "destination": "/error",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/hashedError",
+        "destination": "/:userId/hashedError",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/paymentMadeByOther",
+        "destination": "/:userId/paymentMadeByOther",
+        "statusCode": 200
+      },
+      {
+        "source": "/:userId/paymentMadeByFriend",
+        "destination": "/:userId/paymentMadeByFriend",
+        "statusCode": 200
+      },
+      {
+        "source": "/invalidToken",
+        "destination": "/invalidToken",
+        "statusCode": 200
+      }
+    ]
+  }
+  

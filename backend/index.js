@@ -28,7 +28,7 @@ app.use(session({
   secret: `${process.env.SESSION_SECRET_KEY}`, // Replace with a strong secret key
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Set secure to true if using HTTPS
+  cookie: { secure: true } // Set secure to true if using HTTPS
 }));
 
 
@@ -64,7 +64,7 @@ app.use(express.urlencoded({ extended: true })); // for parsing application/x-ww
 
 
 //MongoDB connection
-connectToDB("mongodb://localhost:27017/e-commerce")
+connectToDB(`${process.env.MONGODB_URL_APP}`)
   .then(() => {
     console.log("MongoDB connected")
   })
