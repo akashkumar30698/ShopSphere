@@ -1,106 +1,138 @@
-import React ,{useEffect,useState} from "react";
-import { Link ,useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"
-import VendorRequests from "../pages/admin/vendorRequests";
+import React, { useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useLogin } from "../ContextApi/loginContext";
+import Cookies from "js-cookie";
 
-function Admin(){
-    
-     
-     const navigate = useNavigate()
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ');
+}
 
+function Admin() {
+    const navigate = useNavigate();
+    const { isLoggedIn, setIsLoggedIn } = useLogin();
 
-     const handleLogoutClick = () => {
+    const navigation = [
+        { name: 'Requests', to: `/${import.meta.env.VITE_ADMIN_ID}/admin/vendorRequests`, current: true },
+    ];
+
+    const handleLogoutClick = () => {
+        console.log("Logout clicked");
         Cookies.remove("accessToken", { path: "/" });
-        navigate("/")
-        
-     }
+        setIsLoggedIn(false); // Ensure this updates the context properly
+        navigate("/");
+    };
 
-
-    useEffect(()=>{
-        const getCookie = Cookies.get("accessToken")
-    
-         if(!getCookie || getCookie == null){
-         navigate("/")
+    useEffect(() => {
+        const getCookie = Cookies.get("accessToken");
+        if (!getCookie) {
+            navigate("/");
+            return
         }
-         
-  },[navigate])
 
+        setIsLoggedIn(true)
 
-
-
+    }, [navigate]);
 
     return (
         <>
-        
-          <nav className="bg-white dark:bg-gray-800 antialiased">
-            <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-8">
+            <Disclosure as="nav" className="bg-gray-800">
+                <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+                    <div className="relative flex h-16 items-center justify-between">
+                        <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                                <span className="sr-only">Open main menu</span>
+                                <Bars3Icon aria-hidden="true" className="block h-6 w-6 group-data-[open]:hidden" />
+                                <XMarkIcon aria-hidden="true" className="hidden h-6 w-6 group-data-[open]:block" />
+                            </DisclosureButton>
+                        </div>
 
-                         <ul className="hidden lg:flex items-center justify-start gap-6 md:gap-8 py-3 sm:justify-center">
-                            <li>
-                                <Link
-                                    to="#"
-                                    title="Home"
-                                    className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                                >
-                                    Home
-                                </Link>
-                             </li>
-                             <li className="shrink-0">
-                                <Link
-                                    to={`/${import.meta.env.VITE_ADMIN_ID}/admin/sellers`}
-                                    title="Sellers"
-                                    className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                                >
-                                  Sellers
-                                </Link>
-                            </li>
+                        <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                            <div className="flex flex-shrink-0 items-center">
+                            <img style={{
+                display: "block", WebkitUserSelect: "none", margin: "auto",
+                cursor: "zoom-in",
+                backgroundColor: "rgb(111 97 97 / 0%)", transition: "background-color 300ms"
+              }} src="https://evershop.io/img/logo.png" width="30px" height="30px" />
+                            </div>
+                            <div className="hidden sm:ml-6 sm:block">
+                                <div className="flex space-x-4">
+                                    {navigation.map((item) => (
+                                        <Link
+                                            key={item.name}
+                                            to={item.to}
+                                            aria-current={item.current ? 'page' : undefined}
+                                            className={classNames(
+                                                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                'rounded-md px-3 py-2 text-sm font-medium'
+                                            )}
+                                        >
+                                            {item.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
 
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                            <Menu as="div" className="relative ml-3">
+                                <div>
+                                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                        <span className="sr-only">Open user menu</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user text-white">
+                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </MenuButton>
+                                </div>
 
-                            <li className="shrink-0">
-                                <Link
-                                    to={`${import.meta.env.VITE_ADMIN_ID}/admin/products`}
-                                    title="Products"
-                                    className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                                >
-                                    Products
-                                </Link>
-                            </li>
-                            <li className="shrink-0">
-                                <Link
-                                    to={`/${import.meta.env.VITE_ADMIN_ID}/admin/vendorRequests`}
-                                    title="Requests"
-                                    className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                                >
-                                    Requests
-                                </Link>
-                            </li>
-
-
-                        </ul>
-                    </div>
-
-                    <div className="flex items-center lg:space-x-2">
-
-
-
-
-                        <button id="myCartDropdownButton1" data-dropdown-toggle="myCartDropdown1" type="button" onClick={handleLogoutClick} className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
-
-                            <span className="hidden sm:flex"><Link to="/">Logout</Link></span>
-
-                        </button>
-
+                                {isLoggedIn ? (
+                                    <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                                        <MenuItem>
+                                            <button
+                                                onClick={handleLogoutClick}
+                                                className="block px-4 py-2 text-sm text-gray-700"
+                                            >
+                                                Log out
+                                            </button>
+                                        </MenuItem>
+                                    </MenuItems>
+                                ) : (
+                                    <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                                        <MenuItem>
+                                            <span className="block px-4 py-2 text-sm text-gray-700">
+                                                Please log in
+                                            </span>
+                                        </MenuItem>
+                                    </MenuItems>
+                                )}
+                            </Menu>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
 
-
+                <DisclosurePanel className="sm:hidden">
+                    <div className="space-y-1 px-2 pb-3 pt-2">
+                        {navigation.map((item) => (
+                            <DisclosureButton
+                                key={item.name}
+                                as={Link}
+                                to={item.to}
+                                aria-current={item.current ? 'page' : undefined}
+                                className={classNames(
+                                    item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                    'block rounded-md px-3 py-2 text-base font-medium'
+                                )}
+                            >
+                                {item.name}
+                            </DisclosureButton>
+                        ))}
+                    </div>
+                </DisclosurePanel>
+            </Disclosure>
         </>
-    )
+    );
 }
 
-
-export default Admin
+export default Admin;

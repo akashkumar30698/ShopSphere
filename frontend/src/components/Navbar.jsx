@@ -1,116 +1,156 @@
 import "../index.css";
-import React, { useEffect } from "react";
-import { Link ,useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useLogin } from "../ContextApi/loginContext.jsx"
 import Cookies from "js-cookie"
+import Hero from "./hero.jsx"
+import { useSelector } from "react-redux";
+import { useParams, useSearchParams } from "react-router-dom";
+import { getLatestValues } from "../middleware/isAuthethicated.jsx";
+import { getCount } from "./hero.jsx";
+import NavbarComponent from "./navbarComponent.jsx";
+import Banner from "./banner.jsx";
+import Footer from "./footer.jsx";
+import Category from "./category.jsx";
+import MobileNavigation from "./mobileNavigation.jsx";
+import "../App.css"
+import YourOrdersDetails from "./yourDetailsSideBar.jsx";
+
+
+export async function getUserId(token, navigate) {
+  try {
+    if (!token) {
+      return;
+    }
+    const res = await fetch(`${import.meta.env.VITE_APP_URL}/getUserId`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      const data = await res.json()
+      navigate(`/${data.id}`)
+    }
+
+  }
+  catch (err) {
+    console.log("some error occured ", err)
+  }
+}
+
+
 
 
 function Navbar() {
 
-    const { isLoggedIn, setIsLoggedIn } = useLogin()
-    const navigate = useNavigate()
+  const { isLoggedIn, setIsLoggedIn ,showCategory,yourOrderDetails} = useLogin()
+  const navigate = useNavigate()
 
-     const handleLogoutClick = () => {
-        setIsLoggedIn(false);
-      
-        Cookies.remove("accessToken", { path: "/" });
-        navigate("/")
+  //    name      initialState name
+  const cart = useSelector((state) => state.addToCart.cart) //This will show the initialState that you defined in createSlices.jsx
+  // const count = useSelector((state) => state.addToCart.count)
+  const params = useParams()
+  const userId = params.userId
+  const [searchParams] = useSearchParams();
+  const isHashed = searchParams.get('hashed');
+ 
+
+  useEffect(() => {
+    const token = Cookies.get("accessToken")
+    if (isHashed) {
+      getLatestValues(token, isHashed, userId, navigate)
+    }
+
+
     
-     }
 
-
-     useEffect(()=>{
-           const getCookie = Cookies.get("accessToken")
-           if(getCookie || getCookie != null){
-                  setIsLoggedIn(true)
-           }
-           else if(!getCookie || getCookie == null){
-            navigate("/")
-           }
-            
-     },[isLoggedIn])
+  }, [])
 
 
 
-    return (
-        <nav className="bg-white dark:bg-gray-800 antialiased">
-            <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-8">
-
-                        <ul className="hidden lg:flex items-center justify-start gap-6 md:gap-8 py-3 sm:justify-center">
-                            <li>
-                                 <Link
-                                    to="#"
-                                    title=""
-                                    className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                                 >
-                                    Home
-                                 </Link>
-                            </li>
-                            <li className="shrink-0">
-                                <Link
-                                    to="/vendor"
-                                    title=""
-                                    className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                                >
-                                    Best Sellers
-                                </Link>
-                            </li>
-
-
-                            <li className="shrink-0">
-                                <Link
-                                    to="#"
-                                    title=""
-                                    className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                                >
-                                    Sell
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    {isLoggedIn ? (
-                        <>
-                            <div className="flex items-center lg:space-x-2">
-
-                                 <button id="myCartDropdownButton1" onClick={handleLogoutClick} data-dropdown-toggle="myCartDropdown1" type="button" className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
-
-                                    <span className="hidden sm:flex">Logout</span>
-
-                                 </button>
-
-                            </div>
-                         </>
-                         ) : (
-                         <>
-                            <div className="flex items-center lg:space-x-2">
-
-                                <button id="myCartDropdownButton1" data-dropdown-toggle="myCartDropdown1" type="button" className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
-                                    <span className="hidden sm:flex"><Link to="/admin-login">Admin</Link></span>
-                                </button>
+  /*
+  const storeAllCarts = async () => {
+    try {
+ 
+      const res = await fetch(
+        `${import.meta.env.VITE_APP_URL}/:userId/cartPage?userId=${userId}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cart),
+        }
+      );
+ 
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data)
+        setCartData(data)
+        return data
+       
+      }
+    } catch (err) {
+      console.log("Some error occurred", err);
+    }
+  };
+ 
+  */
 
 
-                                <button id="myCartDropdownButton1" data-dropdown-toggle="myCartDropdown1" type="button" className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
-                                    <span className="hidden sm:flex"><Link to="/vendor/login">Vendor</Link></span>
-                                </button>
+  const style = {
+    responsive: {
+      display: "flex",
+      position: "fixed",
+      height: "100%",
+      transition: "0.5s ease",
+      top: 0,
+      bottom: 0,
+      maxWidth: "320px",
+      width:"100%",
+      zIndex: 1000
+
+    }
+
+  }
 
 
-                                <button id="myCartDropdownButton1" data-dropdown-toggle="myCartDropdown1" type="button" className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white">
+  return (
+    <>
 
-                                    <span className="hidden sm:flex"><Link to="/login">Login</Link></span>
+      {showCategory && <Category style={style.responsive} />} {/* Conditionally rendering Category */}
 
-                                </button>
-
-                            </div>
-                        </>
-                    )}
+      <NavbarComponent />
 
 
-                </div>
-            </div>
-        </nav>
-    );
+
+      <Banner />
+
+      <div className="flex height">
+         <div className="w-1/4  responsive">
+          <Category />
+         </div>
+
+         <div className="widthHF overflowing flexy">
+          <Hero  />
+         </div>
+      </div>
+
+
+
+      <MobileNavigation />
+
+
+      <YourOrdersDetails/> 
+
+      <Footer />
+
+
+    </>
+
+
+  );
 }
 
 export default Navbar;

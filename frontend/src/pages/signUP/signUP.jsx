@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+import { useSearchParams } from 'react-router-dom';
 
 
 function SignUP() {
@@ -8,6 +8,11 @@ function SignUP() {
   const [check, setCheck] = useState(null)
   const [loading, setLoading] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
+  const [searchParams] = useSearchParams();
+
+
+  
+  const isHashed = searchParams.get('hashed'); 
 
   const [formData, setFormData] = useState({
     name: "",
@@ -160,7 +165,7 @@ function SignUP() {
 
             <div className="text-grey-dark mt-6">
               Already have an account?
-              <Link className="no-underline border-b border-blue text-blue" to="/login">
+              <Link className="no-underline border-b border-blue text-blue" to={isHashed ? `/login?hashed=${isHashed}` : `/login`}>
                 Log in
               </Link>.
             </div>

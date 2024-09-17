@@ -16,8 +16,6 @@ function ForgetPassword() {
     }
 
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
@@ -31,10 +29,7 @@ function ForgetPassword() {
 
             if (response.ok) {
                 const data = await response.json()
-
-       
-              
-                
+      
                     if(data == 'success'){
                         setCheck(false)
                         setEmail({
@@ -43,13 +38,11 @@ function ForgetPassword() {
                                         
                       navigate("/validateOTP")
             
-
                     }
                     else if(data == 'Invalid'){
                         setCheck(true)
                     }
-
-             
+                                 
             }
 
         } catch (err) {

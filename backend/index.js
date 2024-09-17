@@ -1,30 +1,41 @@
-const { io,server,app,express } = require("./socketConnect.js")
-const {router: userAuth }= require("./routes/userAuth");
+const { io, server, app, express } = require("./socketConnect.js")
+const { router: userAuth } = require("./routes/userAuth");
 const cors = require('cors');
 const { connectToDB } = require("./connectToDB")
-const {router : forgetPassword} = require("./routes/forgetPassword")
+const { router: forgetPassword } = require("./routes/forgetPassword")
 const { router: home } = require("./routes/userAuth")
-const {router : admin } = require("./routes/adminAuth.js")
+const { router: admin } = require("./routes/adminAuth.js")
+const { router: cart } = require("./routes/addToCart.js")
+const session = require('express-session');
 require("dotenv").config()
 
 
-const PORT =  8000
+const PORT = 8000
 
 
 
- // Middleware to set Cross-Origin-Opener-Policy
-   app.use((req, res, next) => {
-    res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-    next();
-   })
+// Middleware to set Cross-Origin-Opener-Policy
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+})
 
 
+
+
+// Configure express-session middleware
+app.use(session({
+  secret: `${process.env.SESSION_SECRET_KEY}`, // Replace with a strong secret key
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set secure to true if using HTTPS
+}));
 
 
 //CORS
 const allowedOrigins = [
-  'http://localhost:5173',
-   // Add all potential front-end URLs
+  `${process.env.REACT_API_URL}`,
+  // Add all potential front-end URLs
 ];
 
 
@@ -54,25 +65,28 @@ app.use(express.urlencoded({ extended: true })); // for parsing application/x-ww
 
 //MongoDB connection
 connectToDB("mongodb://localhost:27017/e-commerce")
-.then(()=>{
-  console.log("MongoDB connected")
-})
-.catch((err) =>{
-  console.log("some error occured connecting to mongoDB",err)
-})
+  .then(() => {
+    console.log("MongoDB connected")
+  })
+  .catch((err) => {
+    console.log("some error occured connecting to mongoDB", err)
+  })
 
 
 
 
 
-app.use("/",home)
+app.use("/", home)
 
-app.use("/",userAuth)
+app.use("/", userAuth)
 
-app.use("/",forgetPassword)
+app.use("/", forgetPassword)
 
 //Admin
-app.use("/",admin)
+app.use("/", admin)
+
+//Cart
+app.use("/", cart)
 
 
 
@@ -82,10 +96,8 @@ app.use("/",admin)
 
 
 
-
-
-server.listen(PORT,()=>{
-    console.log(`Server started at http://localhost:${PORT}`)
+server.listen(PORT, () => {
+  console.log(`Server started at http://localhost:${PORT}`)
 })
 
 

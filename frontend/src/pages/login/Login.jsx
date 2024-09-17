@@ -6,32 +6,39 @@ import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie"
 import { useLogin } from "../../ContextApi/loginContext.jsx"
 import { useAuthContext } from "../../ContextApi/authProvider.jsx";
+import { useSearchParams } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 function Login() {
 
   const navigate = useNavigate()
   const [checkExists,setCheckExists] = useState(false)
   const [invalidCredentials,setInvalidCredentials] = useState(false)
-  const { isLoggedIn,setIsLoggedIn } = useLogin()
+  const [checkIsHashed,setIsHashed] = useState(false)
+  const [wrongPassword,setWrongPassword] = useState(false)
 
-   const {isGoogleAuth,formData, setRefreshToken,setCheckCookie,setGoogleFormData,setFormData ,setIsGoogleAuth} = useAuthContext()
+   const { isLoggedIn,setIsLoggedIn } = useLogin()
+   const [searchParams] = useSearchParams();
+   const isHashed = searchParams.get('hashed');
+   const location = useLocation()
+ 
+
+     const {isGoogleAuth,formData, setRefreshToken,setCheckCookie,setGoogleFormData,setFormData ,setIsGoogleAuth} = useAuthContext()
      
+     const handleGoogleClick = () => {
 
-
+     }
 
      const handleSuccess = async (res) => {
-     
         const userDetails = jwtDecode(res.credential)
         const {given_name, email ,picture} = userDetails
-          
-    
+
          setGoogleFormData({
             googleAuthName:given_name,
             googleAuthEmail: email
          })
 
-        try{
-             
+        try{        
             const res = await fetch(`${import.meta.env.VITE_APP_URL}/login`, {
                 method: 'POST',
                 credentials:'include',
@@ -40,20 +47,25 @@ function Login() {
                     given_name: given_name,
                     googleEmail: email,
                     picture: picture,
-                    isGoogleAuth: isGoogleAuth
+                    isGoogleAuth: isGoogleAuth,
+                    isHashedGoogle: checkIsHashed || false
                 }),
               });
-
-        
+  
            if(res.ok){
-
             const data = await res.json()
 
             if(data.message == 'success'){
-                navigate(`/${data.params}`)
+
+                   if(isHashed){
+                    navigate(`/${data.params}?hashed=${isHashed}`)
+                    console.log("hashed executed")
+                   }
+                   else{
+                    navigate(`/${data.params}`)
+                   }
 
                 const cookie = Cookies.get("accessToken",data.accessToken)
-
 
                 setRefreshToken(data.refreshToken)
                 setCheckCookie(cookie)
@@ -74,12 +86,10 @@ function Login() {
             setInvalidCredentials(true)
            }
 
-
-
         }catch(err){
             console.log("Error at login.jsx",err)
         }finally{
-            setIsGoogleAuth(false)
+            setIsHashed(false)
         }
       };
     
@@ -105,13 +115,25 @@ function Login() {
                     method: 'POST',
                     credentials:'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify({
+                        formData: formData,
+                        isHashedRegular: checkIsHashed || false
+                    }),
                   });  
                   
                     if(res.ok){
                         const data = await res.json()
+
                         if(data.message == 'success'){
-                               navigate(`/${data.params}`)
+
+                            setWrongPassword(false)
+
+                             if(isHashed){
+                              navigate(`/${data.params}?hashed=${isHashed}`)
+                             }else{
+                                navigate(`/${data.params}`)
+                             }
+
                                const cookie = Cookies.get("accessToken",data.accessToken)
                         
 
@@ -124,12 +146,28 @@ function Login() {
                             setIsLoggedIn(false)
                         }
                     }
+                    else if(res.status === 403 || res.status === 401){
+                        setWrongPassword(true)
+                    }
 
             }
             catch(err){
                 console.log("Error logging in",err)
+            }finally{
+             setIsGoogleAuth(true)
             }
      }
+
+
+     useEffect(()=>{
+           if(isHashed){
+            setIsHashed(true)
+           }
+     },[])
+
+
+
+
 
     return (
         <>
@@ -163,20 +201,23 @@ function Login() {
                                     </div>
                                     <Link to="/ForgetPassword" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</Link>
                                 </div>
+                                {wrongPassword && <p className="text-red-700">Invalid Email or Password</p>}
 
-                                {invalidCredentials && <p className="text-red-700">User Already Exists</p>}
+                                 {invalidCredentials && <p className="text-red-700">User Already Exists</p>}
                                  {checkExists && <p className="text-red-700">User Already Exists</p>}
-                                <GoogleLogin
+
+
+                                 <GoogleLogin
                                     onSuccess={handleSuccess}
                                     onError={handleError}
+                                    onClick={handleGoogleClick}
                                 />
 
+
                            
-
-
                                 <button type="submit" className="w-full black text-white bg-black-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-black-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                    Don’t have an account yet? <Link to="/signUP" className="font-medium text-black-600 text hover:underline dark:text-black-500">Sign UP</Link>
+                                    Don’t have an account yet? <Link to={isHashed ? `/signUP?hashed=${isHashed}` : `/signUP`} className="font-medium text-black-600 text hover:underline dark:text-black-500">Sign UP</Link>
                                 </p>
 
                             </form>

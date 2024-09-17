@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useSearchParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import "../../App.css";
 import { useLogin } from "../../ContextApi/loginContext";
@@ -13,6 +13,7 @@ function VendorLogin() {
   const [isRequested, setIsRequested] = useState(false);
   const [wrongPassword,setWrongPassword] = useState(false)
   const [sendRequestToAdmin, setSendRequestToAdmin] = useState(false);
+ 
   
   const { isLoggedIn, setIsLoggedIn } = useLogin();
 
@@ -25,7 +26,7 @@ function VendorLogin() {
   // Login
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     try {
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/vendor/login`, {
         method: "POST",
@@ -33,42 +34,40 @@ function VendorLogin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+  
       if (res.ok) {
         const data = await res.json();
-
+  
         if (data.message === "vendor") {
           navigate(`/${data.params}/vendor`);
-
+  
           Cookies.set("accessToken", data.accessToken);
-
+  
           setRefreshToken(data.refreshToken);
           setIsLoggedIn(true);
           setCheckCookie(Cookies.get("accessToken"));
-
+  
           setIsRequested(true);
-          setWrongPassword(false)
-          
+          setWrongPassword(false);
+  
           setSendRequestToAdmin(true);
-
-        
-        } 
-     
-        
-      }else if(res.status === 403){
-        setWrongPassword(true)
+        }
+      } else if (res.status === 403) {
+        setWrongPassword(true);
         resetForm();
-   
-      }
-      else if(res.status === 401){
-        setExists(true)
+
+      } else if (res.status === 401) {
+        setInvalidCredentials(true); 
+        resetForm();
+      } else {
+        console.log("An unexpected error occurred");
       }
     } catch (err) {
       resetForm();
-    
-      console.log("Error logging in", err);
+      console.log("Error logging in: ", err);
     }
   };
+  
 
   const resetForm = () => {
     setIsLoggedIn(false);
@@ -79,7 +78,6 @@ function VendorLogin() {
 
 
 
-  
 
   return (
     <>

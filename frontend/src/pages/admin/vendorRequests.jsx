@@ -40,14 +40,15 @@ function VendorRequests() {
 
   }, []);
 
+
+  
+
   const fetchVendorDetails = async () => {
     const token = Cookies.get("accessToken");
 
     if (!token) {
       return null;
     }
-
-  
 
     try {
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/getVendors`, {
@@ -69,24 +70,22 @@ function VendorRequests() {
     }
   };
 
+
   const updateVendorStatus = async (id, status) => {
 
           //Send the status to vendor
           const socket = io(`${import.meta.env.VITE_APP_URL}`)
-
 
     try {
       const token = Cookies.get("accessToken");
   
       if (!token) {
         return;
-      }
-      
+      } 
                
       socket.on("connect",()=>{
           console.log("a user connected")
       })
- 
  
       socket.on("disconnect",()=>{
        console.log("user disconnected")
@@ -113,9 +112,7 @@ function VendorRequests() {
          );
 
          socket.disconnect()   
-
-        
-
+         
       } else {
         console.log("Failed to update vendor status");
       }

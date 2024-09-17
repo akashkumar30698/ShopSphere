@@ -2,20 +2,23 @@ const { newUser } = require("../model/userAuth")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const { io } = require("../socketConnect")
+//const { passFrontendHashed } = require("./addToCart")
 require("dotenv").config()
 
 let initialVendorStatus = ""
 
+let googleUserId = ""
+let normalUserId = ""
 
-
-
+let googleHash = ""
+let regularHash = ""
 
 //Login
 async function handleUserLogin(req, res) {
  
  try{
   //Google Auth Login or SignUP(If not exists)
- const {given_name,googleEmail,picture,isGoogleAuth} = req.body
+ const {given_name,googleEmail,picture,isGoogleAuth ,isHashedGoogle} = req.body
 
 
   if(isGoogleAuth == true){
@@ -28,7 +31,6 @@ async function handleUserLogin(req, res) {
        const accessToken = generateAccessToken({ name: googleEmailExist.name, email: googleEmailExist.email});
        const refreshToken = jwt.sign({ name: googleEmailExist.name, email: googleEmailExist.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
     
-
           /*
        const options = {
         httpOnly: true,
@@ -39,8 +41,15 @@ async function handleUserLogin(req, res) {
 
         */
 
-
         const userId = googleEmailExist._id
+          
+        googleUserId = ""
+        googleHash = ""
+
+        if(isHashedGoogle){
+        //  googleHash = passFrontendHashed()
+            googleUserId = userId.toHexString()
+        }
 
         res.cookie("accessToken",accessToken)
    
@@ -48,17 +57,16 @@ async function handleUserLogin(req, res) {
        message: "success",
        accessToken: accessToken,
        refreshToken: refreshToken,
-       params:userId
+       params:userId,
+     //  otherHash: googleHash
        })
 
-    
     }
   
      const saltrounds = 10
      const auth = process.env.GOOGLE_AUTH
      const hashedPassword = await bcrypt.hash(auth, saltrounds)
   
-
       const googleAuthUser =  await newUser.create({
         name: given_name,
         email: googleEmail,
@@ -67,15 +75,10 @@ async function handleUserLogin(req, res) {
  
       })
      
-
-
      //Token Validations
      const accessToken = generateAccessToken({ name: googleAuthUser.name,email: googleAuthUser.email});
      const refreshToken = jwt.sign({ name: googleAuthUser.name,email: googleAuthUser.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
     
-
-
-
      /*
      const options = {
       httpOnly: true,
@@ -86,8 +89,14 @@ async function handleUserLogin(req, res) {
 
      */
 
-
      const userIdAuth = googleAuthUser._id
+
+       googleUserId = ""
+       googleHash = ""
+     if(isHashedGoogle){
+     // googleHash = passFrontendHashed()
+      googleUserId =  userIdAuth.toHexString()
+     }
 
      res.cookie("accessToken",accessToken)
    
@@ -95,8 +104,9 @@ async function handleUserLogin(req, res) {
       message: "success",
       accessToken: accessToken,
       refreshToken: refreshToken,
-      params: userIdAuth
-     })
+      params: userIdAuth,
+     // otherHash:googleHash
+      })
               
    }
 
@@ -104,27 +114,30 @@ async function handleUserLogin(req, res) {
 
 
     //Regular login
-    const { email, password } = req.body
+    const { isHashedRegular } = req.body
+
+    
+    console.log(req.body)
+    const email = req.body.email
+    const password = req.body.password
+
     const findEmail = await newUser.findOne({email})
 
      if(!findEmail || findEmail == null){
-      return res.sendStatus(401).json("failure")
+      return res.status(401).json({message: "not-found"})
      }
      
      const hashedPassword = findEmail.password
 
-
      const match = await bcrypt.compare(password,hashedPassword)
 
      if(!match || match == null){
-      return res.sendStatus(403).json("failure")
+      return res.status(403).json({message: "failure"})
      }
 
 
-        initialVendorStatus = findEmail.status
-
-        
-
+         initialVendorStatus = findEmail.status
+     
           //Token Validations
           const accessToken = generateAccessToken({ name: findEmail.name,email: findEmail.email});
           const refreshToken = jwt.sign({ name: findEmail.name,email: findEmail.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
@@ -140,39 +153,44 @@ async function handleUserLogin(req, res) {
 
      */
 
-
-     
        res.cookie("accessToken",accessToken)
 
        const regularUserId = findEmail._id
-  
-       const findGst =  findEmail.gst || {}
-        
 
+       normalUserId = ""
+
+       regularHash = ""
+
+
+       if(isHashedRegular){
+      //  regularHash = passFrontendHashed()
+        normalUserId = regularUserId.toHexString()
+       }
+
+ 
+       const findRole =  findEmail.role || {}
+        
+       
        // Sending Additional details to frontend If role == 'VENDOR'
-       if(findGst || findEmail != null){
+       if(findRole === "VENDOR"){
         
          return res.json({
           message: "vendor",
           accessToken: accessToken,
           refreshToken: refreshToken,
           params: regularUserId, 
-          })
-                 
+          })    
        }
       
         return res.json({
         message: "success",
         accessToken: accessToken,
         refreshToken: refreshToken,
-        params: regularUserId
+        params: regularUserId,
+     //   otherHash:regularHash
         })
               
-     
    }
-
-
-
   
  }
  catch(err){
@@ -195,7 +213,6 @@ async function handleRefresh(req,res){
     //Verify Refersh Token
     jwt.verify(refreshToken,`${process.env.REFRESH_SECRET_TOKEN}`, (err, user) => {
       if (err) return res.sendStatus(403).json("failure");
-      console.log(user)
       const accessToken = generateAccessToken({name : googleAuthName,
                                             email : googleAuthEmail});
   
@@ -262,7 +279,7 @@ async function handleRefresh(req,res){
 
 //Generate Access Token
 const generateAccessToken = (user) => {
-  return jwt.sign(user,`${process.env.ACCESS_SECRET_TOKEN}`, { expiresIn: '10m' });
+  return jwt.sign(user,`${process.env.ACCESS_SECRET_TOKEN}`);
 };
 
 
@@ -271,12 +288,10 @@ const generateAccessToken = (user) => {
 //Sign UP
 async function handleUserSignUP(req, res) {
 
-
   try {
 
     // Vendor SignUp
     const { gst,name, email, password, role } = req.body
-
 
     if ( role == 'VENDOR') {
 
@@ -350,6 +365,9 @@ function VendorInitialStatus(){
 }
 
 
+function PassUserIds(){
+  return {googleUserId,normalUserId}
+}
 
 
 
@@ -360,5 +378,5 @@ module.exports = {
   handleRefresh,
   generateAccessToken,
   VendorInitialStatus,
-
+  PassUserIds,
 }
