@@ -21,11 +21,8 @@ function YourOrdersDetails() {
 
     const handleLogoutClick = () => {
         setIsLoggedIn(false);
-
         Cookies.remove("accessToken", { path: "/" });
-
         localStorage.removeItem("cart")
-
         navigate("/")
     }
 
