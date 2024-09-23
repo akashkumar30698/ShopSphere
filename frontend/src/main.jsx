@@ -84,8 +84,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                  </Route>
 
 
-
-
                 <Route path="/vendor/login" element={<VendorLogin />} />
                 <Route path="/vendor/signUP" element={<VendorSignUP />} />
                 <Route path="/vendor/forgetPassword" element={<VendorForgetPassword />} />
