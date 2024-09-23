@@ -20,7 +20,6 @@ async function handleUserLogin(req, res) {
   //Google Auth Login or SignUP(If not exists)
  const {given_name,googleEmail,picture,isGoogleAuth ,isHashedGoogle} = req.body
 
-
   if(isGoogleAuth == true){
 
     const googleEmailExist = await newUser.findOne({email: googleEmail })
@@ -31,7 +30,8 @@ async function handleUserLogin(req, res) {
        const accessToken = generateAccessToken({ name: googleEmailExist.name, email: googleEmailExist.email});
        const refreshToken = jwt.sign({ name: googleEmailExist.name, email: googleEmailExist.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
     
-          
+        
+       /*
        const options = {
         httpOnly: true,
         secure: process.env.COOKIE_SECURE,
@@ -39,7 +39,7 @@ async function handleUserLogin(req, res) {
         maxAge: 10 * 60 * 1000,  
        };
 
-         
+       */
 
         const userId = googleEmailExist._id
           
@@ -51,7 +51,7 @@ async function handleUserLogin(req, res) {
             googleUserId = userId.toHexString()
         }
 
-        res.cookie("accessToken",accessToken,options)
+        res.cookie("accessToken",accessToken)
    
        return res.json({
        message: "success",
@@ -80,6 +80,7 @@ async function handleUserLogin(req, res) {
      const refreshToken = jwt.sign({ name: googleAuthUser.name,email: googleAuthUser.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
     
      
+     /*
      const options = {
       httpOnly: true,
       secure: process.env.COOKIE_SECURE,
@@ -87,26 +88,28 @@ async function handleUserLogin(req, res) {
       maxAge: 10 * 60 * 1000,  
      };
 
+     */
      
 
      const userIdAuth = googleAuthUser._id
 
        googleUserId = ""
        googleHash = ""
-     if(isHashedGoogle){
-     // googleHash = passFrontendHashed()
-      googleUserId =  userIdAuth.toHexString()
-     }
 
-     res.cookie("accessToken",accessToken,options)
+       if(isHashedGoogle){
+       // googleHash = passFrontendHashed()
+       googleUserId =  userIdAuth.toHexString()
+       }
+
+       res.cookie("accessToken",accessToken)
    
-      return res.json({
-      message: "success",
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      params: userIdAuth,
-     // otherHash:googleHash
-      })
+       return res.json({
+       message: "success",
+       accessToken: accessToken,
+       refreshToken: refreshToken,
+       params: userIdAuth,
+       // otherHash:googleHash
+       })
               
    }
 
@@ -117,7 +120,6 @@ async function handleUserLogin(req, res) {
     const { isHashedRegular } = req.body
 
     
-    console.log(req.body)
     const email = req.body.email
     const password = req.body.password
 
@@ -137,23 +139,24 @@ async function handleUserLogin(req, res) {
 
 
          initialVendorStatus = findEmail.status
+         console.log(findEmail)
      
           //Token Validations
           const accessToken = generateAccessToken({ name: findEmail.name,email: findEmail.email});
           const refreshToken = jwt.sign({ name: findEmail.name,email: findEmail.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
          
      
-     
+     /*
      const options = {
       httpOnly: true,
       secure: process.env.COOKIE_SECURE,
       sameSite: 'None',
       maxAge: 10 * 60 * 1000,  
      };
-
+*/
      
 
-       res.cookie("accessToken",accessToken,options)
+       res.cookie("accessToken",accessToken)
 
        const regularUserId = findEmail._id
 
@@ -168,8 +171,8 @@ async function handleUserLogin(req, res) {
        }
 
  
-       const findRole =  findEmail.role || {}
-        
+        const findRole =  findEmail.role || {}
+        console.log(findRole)
        
        // Sending Additional details to frontend If role == 'VENDOR'
        if(findRole === "VENDOR"){
@@ -212,7 +215,8 @@ async function handleRefresh(req,res){
 
     //Verify Refersh Token
     jwt.verify(refreshToken,`${process.env.REFRESH_SECRET_TOKEN}`, (err, user) => {
-      if (err) return res.sendStatus(403).json("failure");
+      if (err) return res.status(403).json("failure");
+      console.log(err)
       const accessToken = generateAccessToken({name : googleAuthName,
                                             email : googleAuthEmail});
   
@@ -245,13 +249,11 @@ async function handleRefresh(req,res){
        //Verify Refersh Token
 
        jwt.verify(refreshToken,`${process.env.REFRESH_SECRET_TOKEN}`,(err,user)=>{
-           if(err) return res.sendStatus(403).json('failure');
+           if(err) return res.status(403).json('failure');
 
               const accessToken = generateAccessToken({name : name,
               email : email})
     
-
-     
      const options = {
       httpOnly: true,
       secure: process.env.COOKIE_SECURE,
@@ -298,7 +300,7 @@ async function handleUserSignUP(req, res) {
         const vendorExist = await newUser.findOne({ email })
 
         if(vendorExist){
-          return res.sendStatus(401).json("failure")
+          return res.status(401).json("failure")
         }
 
 
@@ -317,23 +319,18 @@ async function handleUserSignUP(req, res) {
 
         io.emit("message",user)
 
-
-      return res.json("success")
-
+       return res.json("success")
     }
-
 
  ////////////////////////////////////////////////////////////////////////////
 
-
     else {
     
-
         const { name, email, password } = req.body
         const userExist = await newUser.findOne({ email })
 
         if (userExist) {
-          return res.sendStatus(401).json({
+          return res.status(401).json({
             message : "already-exists"
           })
           

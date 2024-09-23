@@ -1,11 +1,14 @@
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import Cookies from "js-cookie"
 import VendorNavbar from "../../components/VendorNavbar"
 import { useParams } from "react-router-dom";
+import { useLogin } from "../../ContextApi/loginContext";
 import "../../App.css"
 
 
 function VendorProductDetail() {
+
+     const { isApproved } = useLogin()
 
     const [loading, setLoading] = useState(false)
     const [fileError, setFileError] = useState(false)
@@ -20,6 +23,8 @@ function VendorProductDetail() {
     const [priceError, setPriceError] = useState(false)
     const [invalidPrice, setInvalidPrice] = useState(false)
     const [emptyPrice, setEmptyPrice] = useState(false)
+    const [showApproveError,setShowApproveError] = useState(false)
+
     const fileRef = useRef(null)
     const { userId } = useParams()
 
@@ -29,23 +34,15 @@ function VendorProductDetail() {
 
         let updatedValue = value;
 
-
-
-
         // Validate using regex for a valid number (allowing decimals)
         const priceRegex = /^\d+(\.\d{0,2})?$/;
 
-
         if (name === "productPrice") {
-
             // Validate using regex for a valid number (allowing decimals)
             const priceRegex = /^\d+(\.\d{0,2})?$/;
 
-
-
             // Remove ₹ symbol for validation
             const priceWithoutSymbol = updatedValue.replace("₹", "");
-
 
             if (priceWithoutSymbol === "" || priceRegex.test(priceWithoutSymbol)) {
 
@@ -78,7 +75,6 @@ function VendorProductDetail() {
         } else {
             setFormData({ ...formData, [name]: updatedValue });
         }
-
     }
 
     //ResetForm
@@ -95,9 +91,29 @@ function VendorProductDetail() {
     }
 
 
+    useEffect(()=> {
+        if(isApproved){
+            setShowApproveError(false)
+         }
+         else if(isApproved == false || isApproved == null){
+             setShowApproveError(true)
+         } 
+    },[isApproved])
+
 
     const handleVendorSubmit = async (e) => {
         e.preventDefault()
+
+        console.log(isApproved)
+
+        if(isApproved){
+           setShowApproveError(false)
+        }
+        else if(isApproved == false || isApproved == null){
+            setShowApproveError(true)
+            return
+        }
+
 
         const token = Cookies.get("accessToken")
 
@@ -290,6 +306,10 @@ function VendorProductDetail() {
                         Price cannot be empty or zero
                     </div>
                 )}
+
+                {
+                    showApproveError && <div className="text-red-700">Cannot add product as you are not approved yet</div>
+                }
 
 
                 <button

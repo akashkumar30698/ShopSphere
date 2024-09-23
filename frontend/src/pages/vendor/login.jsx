@@ -39,7 +39,7 @@ function VendorLogin() {
         const data = await res.json();
   
         if (data.message === "vendor") {
-          navigate(`/${data.params}/vendor`);
+          navigate(`/${data.params}/vendor/Your-Products`);
   
           Cookies.set("accessToken", data.accessToken);
   
@@ -49,15 +49,19 @@ function VendorLogin() {
   
           setIsRequested(true);
           setWrongPassword(false);
+          setInvalidCredentials(false)
   
           setSendRequestToAdmin(true);
         }
       } else if (res.status === 403) {
         setWrongPassword(true);
+        setInvalidCredentials(false)
         resetForm();
 
       } else if (res.status === 401) {
         setInvalidCredentials(true); 
+        setWrongPassword(false)
+        console.log("res")
         resetForm();
       } else {
         console.log("An unexpected error occurred");
@@ -121,6 +125,10 @@ function VendorLogin() {
                 </div>
 
                 {wrongPassword && <p className="text-red-700">Invalid Email or Password</p>}
+                
+                { 
+                  invalidCredentials && <div className="text-red-700" >Invaild credentials</div>
+                }
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">
@@ -143,6 +151,7 @@ function VendorLogin() {
                     Forgot password?
                   </Link>
                 </div>
+
 
                 <button
                   type="submit"

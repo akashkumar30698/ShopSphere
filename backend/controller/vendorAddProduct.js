@@ -51,7 +51,7 @@ async function handleVendorYourProducts(req,res){
          const userId = req.query.userId
          
          if(!userId){
-          return res.sendStatus(401).json({message:"No userId find"})
+          return res.status(401).json({message:"No userId find"})
          }
           
         const products =  await productDetail.find({createdBy:userId})
@@ -72,7 +72,7 @@ async function handleDeleteProduct(req,res){
      const deleteQuery = await productDetail.findByIdAndDelete(productId)
      
     if(!deleteQuery){
-        return res.sendStatus(401).json("unable to find product Id")
+        return res.status(401).json("unable to find product Id")
     }
 
 

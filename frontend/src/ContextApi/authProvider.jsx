@@ -6,7 +6,9 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const { setIsLoggedIn } = useLogin()
-    const [refreshToken, setRefreshToken] = useState(null);
+    const [refreshToken, setRefreshToken] = useState(() => Cookies.get("refreshToken") || null);
+    const [adminRefreshToken, setAdminRefreshToken] = useState(() => Cookies.get("adminRefreshToken") || null);
+
     const [isGoogleAuth, setIsGoogleAuth] = useState(true);
     const [formData, setFormData] = useState(
         {
@@ -19,7 +21,6 @@ export const AuthProvider = ({ children }) => {
         email: "",
         password: ""
     })
-    const [adminRefreshToken,setAdminRefreshToken] = useState(null)
     const [checkCookie,setCheckCookie] = useState(null)
     const [googleFormData, setGoogleFormData] = useState({
         googleAuthName: "",
@@ -39,13 +40,12 @@ export const AuthProvider = ({ children }) => {
                         method: 'POST',
                         credentials: 'include',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(isGoogleAuth ? {...googleFormData,...refreshToken }: {...formData,...refreshToken}),
+                        body: JSON.stringify(isGoogleAuth ? { ...googleFormData, refreshToken } : { ...formData, refreshToken }),
                     });
 
                     if (res.ok) {
                         const data = await res.json();
-                          const cookie =  Cookies.get("accessToken", data.accessToken);
-                           setCheckCookie(cookie)
+                        Cookies.set("accessToken", data.accessToken);
                         setIsLoggedIn(true);
                     }
                 } catch (err) {
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
             giveAccessToken();
         }
-    }, [checkCookie]);
+    }, [refreshToken, isGoogleAuth, googleFormData, formData]);
 
     return (
         <AuthContext.Provider value={{
