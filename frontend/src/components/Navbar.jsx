@@ -33,6 +33,9 @@ export async function getUserId(token, navigate) {
       const data = await res.json()
       navigate(`/${data.id}`)
     }
+    else if(res.status === 501){
+      navigate(`/invalidToken`)
+  }
 
   }
   catch (err) {

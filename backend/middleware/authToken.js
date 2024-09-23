@@ -26,7 +26,7 @@ async function getUserIdFromToken(req, res,next) {
            
        if (!userIdEmail || !getIdFromDB) {
           getId = ""
-          return res.redirect(`${process.env.REACT_API_URL}/invalidToken`)
+          return res.status(501).json("invalid-token")
         }
 
         //Find Id from database

@@ -149,7 +149,6 @@ function Login() {
                     else if(res.status === 403 || res.status === 401){
                         setWrongPassword(true)
                     }
-
             }
             catch(err){
                 console.log("Error logging in",err)
@@ -158,15 +157,11 @@ function Login() {
             }
      }
 
-
      useEffect(()=>{
            if(isHashed){
             setIsHashed(true)
            }
      },[])
-
-
-
 
 
     return (
