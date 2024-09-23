@@ -36,7 +36,7 @@ function Hero() {
   const fetchAllProducts = async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_APP_URL}/:userId/all-products`,
+        `https://e-commerce-app-3-xhy3.onrender.com/:userId/all-products`,
         {
           method: "GET",
         }
