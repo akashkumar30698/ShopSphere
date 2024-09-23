@@ -47,7 +47,7 @@ function Hero() {
         setAllProducts(data.allProduct);
       }
     } catch (err) {
-      console.log("Some error occurred", err);
+      console.log("Some error occurred at all products", err);
       fetchAllProducts()
     }
   };
