@@ -1,101 +1,45 @@
 {
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
-      }
-    ],
-    "redirects": [
-      {
-        "source": "/login",
-        "destination": "/login",
-        "statusCode": 200
-      },
-      {
-        "source": "/signUP",
-        "destination": "/signUP",
-        "statusCode": 200
-      },
-      {
-        "source": "/ForgetPassword",
-        "destination": "/ForgetPassword",
-        "statusCode": 200
-      },
-      {
-        "source": "/ResetPassword",
-        "destination": "/ResetPassword",
-        "statusCode": 200
-      },
-      {
-        "source": "/validateOTP",
-        "destination": "/validateOTP",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/vendor",
-        "destination": "/:userId/vendor",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/vendor/sell",
-        "destination": "/:userId/vendor/sell",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/vendor/Your-Products",
-        "destination": "/:userId/vendor/Your-Products",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/admin",
-        "destination": "/:userId/admin",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/paymentSuccess",
-        "destination": "/:userId/paymentSuccess",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/cartPage",
-        "destination": "/:userId/cartPage",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/address",
-        "destination": "/:userId/address",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/yourOrders",
-        "destination": "/:userId/yourOrders",
-        "statusCode": 200
-      },
-      {
-        "source": "/error",
-        "destination": "/error",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/hashedError",
-        "destination": "/:userId/hashedError",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/paymentMadeByOther",
-        "destination": "/:userId/paymentMadeByOther",
-        "statusCode": 200
-      },
-      {
-        "source": "/:userId/paymentMadeByFriend",
-        "destination": "/:userId/paymentMadeByFriend",
-        "statusCode": 200
-      },
-      {
-        "source": "/invalidToken",
-        "destination": "/invalidToken",
-        "statusCode": 200
-      }
-    ]
-  }
-  
+  "rewrites": [
+    { "source": "/login", "destination": "/index.html" },
+    { "source": "/:userId", "destination": "/index.html" },
+    { "source": "/ForgetPassword", "destination": "/index.html" },
+    { "source": "/ResetPassword", "destination": "/index.html" },
+    { "source": "/validateOTP", "destination": "/index.html" },
+    { "source": "/signUP", "destination": "/index.html" },
+    { "source": "/:userId/vendor", "destination": "/index.html" },
+    { "source": "/:userId/vendor/approvals", "destination": "/index.html" },
+    { "source": "/:userId/vendor/sell", "destination": "/index.html" },
+    { "source": "/:userId/vendor/Your-Products", "destination": "/index.html" },
+
+    { "source": "/vendor/login", "destination": "/index.html" },
+    { "source": "/vendor/signUP", "destination": "/index.html" },
+    { "source": "/vendor/forgetPassword", "destination": "/index.html" },
+    { "source": "/vendor/resetPassword", "destination": "/index.html" },
+    { "source": "/vendor/validateOTP", "destination": "/index.html" },
+
+    { "source": "/:userId/admin", "destination": "/index.html" },
+    { "source": "/admin-login", "destination": "/index.html" },
+    { "source": "/:userId/admin/vendorRequests", "destination": "/index.html" },
+
+    { "source": "/:userId/paymentSuccess", "destination": "/index.html" },
+    { "source": "/:userId/paymentMadeByOther", "destination": "/index.html" },
+
+    { "source": "/:userId/selfHashedError", "destination": "/index.html" },
+    { "source": "/:userId/cartPage", "destination": "/index.html" },
+
+    { "source": "/:userId/address", "destination": "/index.html" },
+    { "source": "/:userId/orderInitiatedByOther", "destination": "/index.html" },
+
+    { "source": "/login-error", "destination": "/index.html" },
+    { "source": "/:userId/paymentMadeByFriend", "destination": "/index.html" },
+
+    { "source": "/:userId/yourOrders", "destination": "/index.html" },
+
+    { "source": "/error", "destination": "/index.html" },
+    { "source": "/:userId/hashedError", "destination": "/index.html" },
+
+    { "source": "/:userId/hashed", "destination": "/index.html" },
+    { "source": "/invalidToken", "destination": "/index.html" }
+
+  ]
+}

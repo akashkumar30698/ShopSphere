@@ -130,6 +130,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                  
                   <Route path="/invalidToken" element={<InvalidToken/>}  />
 
+                  <Route path="*" element={<InvalidToken />} />
+
               </Routes>
             </BrowserRouter>
           </AuthProvider>
