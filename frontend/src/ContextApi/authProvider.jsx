@@ -40,6 +40,8 @@ export const AuthProvider = ({ children }) => {
 
                     if (res.ok) {
                         const data = await res.json();
+                        
+                        console.log("refresh executed")
                         Cookies.set("accessToken", data.accessToken);
                         setIsLoggedIn(true);
                         setCheckCookie(Cookies.get("accessToken"));
