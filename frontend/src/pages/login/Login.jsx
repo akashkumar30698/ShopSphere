@@ -63,7 +63,7 @@ function Login() {
                     console.log("hashed executed")
                    }
                 
-                    navigate(`/${data.params}`)
+                     navigate(`/${data.params}`)
                      console.log("no hashed executed")
 
                 const cookie = Cookies.get("accessToken",data.accessToken)
