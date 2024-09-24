@@ -93,7 +93,7 @@ function Hero() {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 maxWidth">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 heightHF maxWidth">
         {allProducts.length > 0 ? (
           allProducts.map((allProduct) => (
             <div

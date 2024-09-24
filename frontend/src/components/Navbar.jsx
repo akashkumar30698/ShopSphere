@@ -131,7 +131,7 @@ function Navbar() {
           <Category />
          </div>
 
-         <div className="widthHF heightHF overflowing flexy">
+         <div className="widthHF overflowing flexy">
           <Hero  />
          </div>
       </div>
