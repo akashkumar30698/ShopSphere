@@ -13,8 +13,6 @@ const ShareButtons = ({ url }) => {
 
   const {checkTrue,setCheckTrue} = useLogin()
 
-
-
   return (
     <div>
       <button onClick={() => {

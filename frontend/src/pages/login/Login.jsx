@@ -8,7 +8,9 @@ import { useLogin } from "../../ContextApi/loginContext.jsx";
 import { useAuthContext } from "../../ContextApi/authProvider.jsx";
 
 function Login() {
+
   const navigate = useNavigate();
+
   const [checkExists, setCheckExists] = useState(false);
   const [invalidCredentials, setInvalidCredentials] = useState(false);
   const [checkIsHashed, setIsHashed] = useState(false);
@@ -19,7 +21,7 @@ function Login() {
   const isHashed = searchParams.get('hashed');
   const location = useLocation();
 
-  const { isGoogleAuth, formData, setRefreshToken, setCheckCookie, setGoogleFormData, setFormData, setIsGoogleAuth } = useAuthContext();
+  const { isGoogleAuth , formData , setRefreshToken , setCheckCookie , setGoogleFormData , setFormData , setIsGoogleAuth } = useAuthContext();
 
   const handleGoogleSuccess = async (res) => {
     const userDetails = jwtDecode(res.credential);
