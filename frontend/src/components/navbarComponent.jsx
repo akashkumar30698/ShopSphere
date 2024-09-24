@@ -58,7 +58,6 @@ function NavbarComponent() {
          try{
           const res = await fetch(`${import.meta.env.VITE_APP_URL}/updateProducts?input=${input}`, {
             method: 'GET',
-        
           });  
           
             if(res.ok){

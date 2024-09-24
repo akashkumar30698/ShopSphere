@@ -90,12 +90,6 @@ app.use("/", cart)
 
 
 
-
-
-
-
-
-
 server.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`)
 })

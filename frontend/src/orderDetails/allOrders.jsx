@@ -28,7 +28,6 @@ function AllOrders() {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data)
 
                 setOrders(data)
                 setError(false)

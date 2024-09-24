@@ -120,7 +120,7 @@ async function handleUpdateProducts(req,res){
     try {
        const { input } = req.query
 
-       const products = await  productDetail.find({category:input})
+       const products = await productDetail.find({category:input})
 
        if(products){
             return res.json(products)
