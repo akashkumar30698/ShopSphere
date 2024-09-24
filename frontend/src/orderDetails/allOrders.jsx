@@ -28,12 +28,10 @@ function AllOrders() {
 
             if (response.ok) {
                 const data = await response.json();
-
                 setOrders(data)
                 setError(false)
             }
             else if (response.status == 404) {
-
                 setError(true)
             }
 
@@ -42,17 +40,12 @@ function AllOrders() {
         }
     };
 
-
     const handleGoToHomePage = () => {
         navigate(`/${userId}`)
     }
 
-
-
-
     // Fetch the orders data from backend
     useEffect(() => {
-
         fetchOrders();
     }, []);
 
@@ -60,7 +53,6 @@ function AllOrders() {
     if (error) {
         return (
             <>
-
                 <div className="flexy">
                     <div>No Orders Found</div>
                     <button onClick={handleGoToHomePage} className=" px-6 py-3 text-white bg-red-700 rounded-lg hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">

@@ -76,7 +76,9 @@ function MobileNavigation() {
      };
 
     const handleHomeClick = () => {
-     navigate(`/${userId}`)
+      if(userId){
+        navigate(`/${userId}`)
+      }
     }
 
   
