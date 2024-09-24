@@ -132,10 +132,9 @@
     display: flex;
   }
   .overflowing{
-    overflow: hidden;
+    overflow-y: hidden;
   }
 }
-
 
 .banner-content {
   background: hsla(0, 0%, 100%, 0.8);

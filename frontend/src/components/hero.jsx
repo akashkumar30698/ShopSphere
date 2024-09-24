@@ -87,9 +87,9 @@ function Hero() {
     getCount();
   };
 
-  useEffect(() => {
-    fetchAllProducts();
-  }, [setAllProducts]); // Add setAllProducts to the dependency array
+    useEffect(() => {
+      fetchAllProducts();
+    }, [setAllProducts]); 
 
   return (
     <>

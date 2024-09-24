@@ -246,14 +246,10 @@ function OrderAddress() {
 
 
     const handleCancelButton = ()  => {
-
         if(userId){
             navigate(`/${userId}`)
         }
     }
-
-
-
 
     return (
         <>
