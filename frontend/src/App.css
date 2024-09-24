@@ -85,6 +85,10 @@
       width: 100%;
     }
 
+    .heightHF{
+      height: 100%;
+    }
+
     .overflowing{
       overflow-y: hidden !important;
     }
