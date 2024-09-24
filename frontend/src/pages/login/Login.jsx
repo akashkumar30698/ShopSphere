@@ -185,7 +185,7 @@ function Login() {
             </Link>
           </div>
 
-          <button type="submit" className="w-full text-white bg-black-600 hover:bg-blue-700 rounded-lg p-2.5">
+          <button type="submit" className="w-full text-white dark:bg-black-600 hover:bg-gray-700 rounded-lg p-2.5">
             Sign in
           </button>
 
@@ -194,7 +194,7 @@ function Login() {
         <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => console.log("Google Login Failed")} />
         <p className="text-sm font-light text-gray-500 dark:text-gray-400">
           Don’t have an account yet?{" "}
-          <Link to="/signUp" className="font-medium text-blue-600 hover:underline dark:text-black-500">
+          <Link to="/signUp" className="font-medium text-black-600 hover:underline dark:text-black-500">
             Sign up
           </Link>
         </p>
