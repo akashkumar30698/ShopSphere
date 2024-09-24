@@ -7,6 +7,8 @@ const { handleUserPaymentCheckOut,handlePaymentVerification } = require("../cont
 const { uploadFiles } = require("../multer/multer.js")
 const { getUserIdFromToken ,handleRevertBackId } = require("../middleware/authToken.js")
 
+
+
 //home
 router.get("/",(req,res)=>{
     res.json({message : "successfully connected"})
@@ -22,7 +24,6 @@ router.post("/signUP",handleUserSignUP)
 //All Products
 router.get("/all-products",handleGetAllProducts)
    
-
 //Product Payment CheckOut
 router.post("/:userId/checkout",handleUserPaymentCheckOut)
 

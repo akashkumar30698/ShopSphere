@@ -32,14 +32,14 @@ async function handleUserLogin(req, res) {
        const refreshToken = jwt.sign({ name: googleEmailExist.name, email: googleEmailExist.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
     
         
-       /*
+       
        const options = {
         httpOnly: true,
         secure: process.env.COOKIE_SECURE,
         sameSite: 'None',
         maxAge: 10 * 60 * 1000,  
        };
-       */
+       
 
         const userId = googleEmailExist._id
           
@@ -51,7 +51,7 @@ async function handleUserLogin(req, res) {
             googleUserId = userId.toHexString()
         }
 
-        res.cookie("accessToken",accessToken)
+        res.cookie("accessToken",accessToken,options)
    
        return res.json({
        message: "success",
@@ -79,17 +79,15 @@ async function handleUserLogin(req, res) {
      const refreshToken = jwt.sign({ name: googleAuthUser.name,email: googleAuthUser.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
     
      
-     /*
+     
      const options = {
       httpOnly: true,
       secure: process.env.COOKIE_SECURE,
       sameSite: 'None',
       maxAge: 10 * 60 * 1000,  
      };
-     */
      
-
-     const userIdAuth = googleAuthUser._id
+       const userIdAuth = googleAuthUser._id
 
        googleUserId = ""
        googleHash = ""
@@ -99,7 +97,7 @@ async function handleUserLogin(req, res) {
           googleUserId =  userIdAuth.toHexString()
        }
 
-        res.cookie("accessToken",accessToken)
+        res.cookie("accessToken",accessToken,options)
    
         return res.json({
         message: "success",
@@ -143,17 +141,17 @@ async function handleUserLogin(req, res) {
           const refreshToken = jwt.sign({ name: findEmail.name,email: findEmail.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
          
      
-     /*
+     
      const options = {
       httpOnly: true,
       secure: process.env.COOKIE_SECURE,
       sameSite: 'None',
       maxAge: 10 * 60 * 1000,  
      };
-*/
+
      
 
-       res.cookie("accessToken",accessToken)
+       res.cookie("accessToken",accessToken,options)
 
        const regularUserId = findEmail._id
 
@@ -216,8 +214,7 @@ async function handleRefresh(req,res){
       console.log(err)
       const accessToken = generateAccessToken({name : googleAuthName,
                                             email : googleAuthEmail});
-  
-     
+   
      const options = {
       httpOnly: true,
       secure: process.env.COOKIE_SECURE,
@@ -225,23 +222,19 @@ async function handleRefresh(req,res){
       maxAge: 10 * 60 * 1000,  
      };
 
-     
+     res.cookie("accessToken",accessToken,options)
 
-
-    res.cookie("accessToken",accessToken,options)
-
-
- 
-    return res.json({
+     return res.json({
       message: "success",
       accessToken: accessToken,
      })
               
     })
   
-  }else{
+  }
+  else {
 
-    const {name,email,refreshToken} = req.body
+     const { name , email ,refreshToken } = req.body
 
        //Verify Refersh Token
 
