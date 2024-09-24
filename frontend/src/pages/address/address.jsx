@@ -9,6 +9,7 @@ import ShareButtons from "./shareButtons";
 import Loading from "./loading";
 
 
+
 // Export the handleBuyProduct function
 export const handleBuyProduct = async (userId, totalAmount, allProductId, isHashed, navigate, addressDetails) => {
     try {
@@ -244,6 +245,14 @@ function OrderAddress() {
     }, [checkTrue])
 
 
+    const handleCancelButton = ()  => {
+
+        if(userId){
+            navigate(`/${userId}`)
+        }
+    }
+
+
 
 
     return (
@@ -386,7 +395,7 @@ function OrderAddress() {
 
 
                     <div className="mt-6 flex items-center justify-end gap-x-6">
-                        <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
+                        <button onClick={handleCancelButton} type="button" className="text-sm font-semibold leading-6 text-gray-900">
                             Cancel
                         </button>
                         <button
