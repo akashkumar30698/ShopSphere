@@ -345,18 +345,13 @@ async function handleUserSignUP(req, res) {
 
 }
 
-
-
 function VendorInitialStatus(){
   return initialVendorStatus
 }
 
-
 function PassUserIds(){
   return {googleUserId,normalUserId}
 }
-
-
 
 
 module.exports = {
