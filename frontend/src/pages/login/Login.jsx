@@ -79,7 +79,7 @@ function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsGoogleAuth(false);
@@ -124,63 +124,79 @@ function Login() {
 
   return (
     <>
-      <section className="">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Login to your account
-              </h1>
-              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
-                <div>
-                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white block w-full p-2.5"
-                    placeholder="name@company.com"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white block w-full p-2.5"
-                    required
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input id="remember" type="checkbox" className="w-4 h-4 bg-gray-50 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600" required />
-                    </div>
-                    <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-white">Remember me</label>
-                  </div>
-                  <Link to="/forgetPassword" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot password?</Link>
-                </div>
-                <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 rounded-lg p-2.5">Sign in</button>
-              </form>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={() => console.log('Google Login Failed')}
-              />
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet? <Link to="/signUp" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign up</Link>
-              </p>
-            </div>
+<section className="grayscale">
+  <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+    <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          Login to your account
+        </h1>
+        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Your email
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white block w-full p-2.5"
+              placeholder="name@company.com"
+              required
+            />
           </div>
-        </div>
-      </section>
+          <div>
+            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white block w-full p-2.5"
+              required
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  className="w-4 h-4 bg-gray-50 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
+              </div>
+              <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                Remember me
+              </label>
+            </div>
+            <Link to="/forgetPassword" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+              Forgot password?
+            </Link>
+          </div>
+          <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 rounded-lg p-2.5">
+            Sign in
+          </button>
+        </form>
+        <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => console.log("Google Login Failed")} />
+        <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+          Don’t have an account yet?{" "}
+          <Link to="/signUp" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
     </>
   );
 }
