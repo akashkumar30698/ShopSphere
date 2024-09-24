@@ -2,10 +2,12 @@ import { Link, useNavigate, useSearchParams, useLocation } from "react-router-do
 import React, { useEffect, useState } from "react";
 import "../../App.css";
 import { GoogleLogin } from '@react-oauth/google';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import { useLogin } from "../../ContextApi/loginContext.jsx";
 import { useAuthContext } from "../../ContextApi/authProvider.jsx";
+
+
 
 function Login() {
 
