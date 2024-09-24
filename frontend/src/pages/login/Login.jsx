@@ -124,13 +124,14 @@ function Login() {
 
   return (
     <>
-<section className="grayscale">
+<section >
   <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
     <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-white-800 dark:border-gray-700">
       <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-black">
           Login to your account
         </h1>
+
         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">
@@ -179,12 +180,12 @@ function Login() {
                 Remember me
               </label>
             </div>
-            <Link to="/forgetPassword" className="text-sm font-medium text-blue-600 hover:underline dark:text-black-500">
+            <Link to="/forgetPassword" className="text-sm font-medium text-black-600 hover:underline dark:text-black-500">
               Forgot password?
             </Link>
           </div>
 
-          <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 rounded-lg p-2.5">
+          <button type="submit" className="w-full text-white bg-black-600 hover:bg-blue-700 rounded-lg p-2.5">
             Sign in
           </button>
 
