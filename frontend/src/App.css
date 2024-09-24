@@ -89,6 +89,12 @@
       height: 100%;
     }
 
+
+    .height{
+      height: 60rem;
+      gap: 30px;
+    }
+
     .overflowing{
       overflow-y: hidden !important;
     }
@@ -134,6 +140,11 @@
 
   .desktop {
     display: flex;
+  }
+
+  .height{
+    height: 45rem;
+    gap: 30px;
   }
  
 }
@@ -504,10 +515,7 @@
   overflow-y: auto;
 }
 
-.height{
-  height: 45rem;
-  gap: 30px;
-}
+
 
 .width{
   width: 95%;
