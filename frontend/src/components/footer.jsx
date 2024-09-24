@@ -9,7 +9,7 @@ export default function Footer() {
                 backgroundColor: "rgb(25 23 23)",
                 padding: "50px 0px 30px 0px",
                 margin: "0px",
-                marginTop: "24px",
+                marginTop: "8px",
                 width: "100%",
                 maxWidth: "100%",
                 color: "rgb(0, 0, 0)",
