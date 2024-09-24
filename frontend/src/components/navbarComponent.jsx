@@ -56,10 +56,9 @@ function NavbarComponent() {
   const updateProductsOnSearchClick  = async (input) => {
 
          try{
-          const res = await fetch(`${import.meta.env.VITE_APP_URL}/updateProducts`, {
+          const res = await fetch(`${import.meta.env.VITE_APP_URL}/updateProducts?input=${input}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(input),
+        
           });  
           
             if(res.ok){

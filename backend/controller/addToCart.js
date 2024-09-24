@@ -118,7 +118,7 @@ function handleGetLatestPassValues(req,res){
 async function handleUpdateProducts(req,res){
 
     try {
-       const input = req.body
+       const { input } = req.query
 
        const products = await  productDetail.find({category:input})
 
