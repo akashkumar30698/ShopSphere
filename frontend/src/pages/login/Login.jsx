@@ -185,7 +185,7 @@ function Login() {
             </Link>
           </div>
 
-          <button type="submit" className="w-full text-white dark:bg-black-600 hover:bg-gray-700 rounded-lg p-2.5">
+          <button type="submit" className="w-full text-white color hover:bg-gray-700 rounded-lg p-2.5">
             Sign in
           </button>
 
