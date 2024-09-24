@@ -45,7 +45,6 @@ async function handleUserPaymentCheckOut(req, res) {
         };
 
 
-
           // Store the address details and other info in the session
           req.session.paymentInfo = {
             addressDetails, 
@@ -133,8 +132,8 @@ async function handlePaymentVerification(req, res) {
           const { firstName,lastName,emailAddress,houseNo,streetNo,city,state,postalCode } = addressDetails
 
 
-          console.log(addressDetails,"payment")
-            //Update Address Details too
+              console.log(addressDetails,"payment")
+             //Update Address Details too
             // Store address details in the database
             await addressDetailsToDB.create({
                 firstName: firstName,

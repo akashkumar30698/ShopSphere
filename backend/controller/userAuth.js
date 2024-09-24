@@ -16,11 +16,12 @@ let regularHash = ""
 //Login
 async function handleUserLogin(req, res) {
  
- try{
-  //Google Auth Login or SignUP(If not exists)
- const {given_name,googleEmail,picture,isGoogleAuth ,isHashedGoogle} = req.body
+ try {
 
-  if(isGoogleAuth == true){
+  //Google Auth Login or SignUP(If not exists)
+  const {given_name,googleEmail,picture,isGoogleAuth ,isHashedGoogle} = req.body
+
+   if(isGoogleAuth == true) {
 
     const googleEmailExist = await newUser.findOne({email: googleEmail })
   
@@ -38,7 +39,6 @@ async function handleUserLogin(req, res) {
         sameSite: 'None',
         maxAge: 10 * 60 * 1000,  
        };
-
        */
 
         const userId = googleEmailExist._id
@@ -58,7 +58,7 @@ async function handleUserLogin(req, res) {
        accessToken: accessToken,
        refreshToken: refreshToken,
        params:userId,
-     //  otherHash: googleHash
+     //otherHash: googleHash
        })
 
     }
@@ -72,7 +72,6 @@ async function handleUserLogin(req, res) {
         email: googleEmail,
         password : hashedPassword,
         picture: picture
- 
       })
      
      //Token Validations
@@ -87,7 +86,6 @@ async function handleUserLogin(req, res) {
       sameSite: 'None',
       maxAge: 10 * 60 * 1000,  
      };
-
      */
      
 
@@ -98,17 +96,17 @@ async function handleUserLogin(req, res) {
 
        if(isHashedGoogle){
        // googleHash = passFrontendHashed()
-       googleUserId =  userIdAuth.toHexString()
+          googleUserId =  userIdAuth.toHexString()
        }
 
-       res.cookie("accessToken",accessToken)
+        res.cookie("accessToken",accessToken)
    
-       return res.json({
-       message: "success",
-       accessToken: accessToken,
-       refreshToken: refreshToken,
-       params: userIdAuth,
-       // otherHash:googleHash
+        return res.json({
+        message: "success",
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        params: userIdAuth,
+      //otherHash:googleHash
        })
               
    }
@@ -119,11 +117,10 @@ async function handleUserLogin(req, res) {
     //Regular login
     const { isHashedRegular } = req.body
 
-    
-    const email = req.body.email
-    const password = req.body.password
+     const email = req.body.email
+     const password = req.body.password
 
-    const findEmail = await newUser.findOne({email})
+     const findEmail = await newUser.findOne({email})
 
      if(!findEmail || findEmail == null){
       return res.status(401).json({message: "not-found"})

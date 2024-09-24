@@ -11,18 +11,17 @@ import { useLocation } from "react-router-dom";
 
 function Login() {
 
-  const navigate = useNavigate()
-  const [checkExists,setCheckExists] = useState(false)
-  const [invalidCredentials,setInvalidCredentials] = useState(false)
-  const [checkIsHashed,setIsHashed] = useState(false)
-  const [wrongPassword,setWrongPassword] = useState(false)
+     const navigate = useNavigate()
+     const [checkExists,setCheckExists] = useState(false)
+     const [invalidCredentials,setInvalidCredentials] = useState(false)
+     const [checkIsHashed,setIsHashed] = useState(false)
+     const [wrongPassword,setWrongPassword] = useState(false)
 
-   const { isLoggedIn,setIsLoggedIn } = useLogin()
-   const [searchParams] = useSearchParams();
-   const isHashed = searchParams.get('hashed');
-   const location = useLocation()
+     const { isLoggedIn,setIsLoggedIn } = useLogin()
+     const [searchParams] = useSearchParams();
+     const isHashed = searchParams.get('hashed');
+     const location = useLocation()
  
-
      const {isGoogleAuth,formData, setRefreshToken,setCheckCookie,setGoogleFormData,setFormData ,setIsGoogleAuth} = useAuthContext()
      
      const handleGoogleClick = () => {
@@ -38,7 +37,7 @@ function Login() {
             googleAuthEmail: email
          })
 
-        try{        
+        try {        
             const res = await fetch(`${import.meta.env.VITE_APP_URL}/login`, {
                 method: 'POST',
                 credentials:'include',
@@ -57,13 +56,15 @@ function Login() {
 
             if(data.message == 'success'){
 
+
+
                    if(isHashed){
                     navigate(`/${data.params}?hashed=${isHashed}`)
                     console.log("hashed executed")
                    }
-                   else{
+                
                     navigate(`/${data.params}`)
-                   }
+                     console.log("no hashed executed")
 
                 const cookie = Cookies.get("accessToken",data.accessToken)
 
