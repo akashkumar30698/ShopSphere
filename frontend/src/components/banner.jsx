@@ -32,7 +32,7 @@ function Banner() {
 
     return (
         <>
-            <div className="slideshow-container">
+            <div className="slideshow-container mb-24">
                 {images.map((image, index) => (
                     <div
                         key={index}
