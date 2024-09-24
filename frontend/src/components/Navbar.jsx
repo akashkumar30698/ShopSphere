@@ -66,9 +66,6 @@ function Navbar() {
       getLatestValues(token, isHashed, userId, navigate)
     }
 
-
-    
-
   }, [])
 
 
@@ -113,7 +110,6 @@ function Navbar() {
       maxWidth: "320px",
       width:"100%",
       zIndex: 1000
-
     }
 
   }

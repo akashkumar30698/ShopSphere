@@ -131,6 +131,9 @@
   .desktop {
     display: flex;
   }
+  .overflowing{
+    overflow: hidden;
+  }
 }
 
 
