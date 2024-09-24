@@ -5,38 +5,32 @@ import { useLogin } from './loginContext';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    
-    const { setIsLoggedIn } = useLogin()
+    const { setIsLoggedIn } = useLogin();
     const [refreshToken, setRefreshToken] = useState(() => Cookies.get("refreshToken") || null);
     const [adminRefreshToken, setAdminRefreshToken] = useState(() => Cookies.get("adminRefreshToken") || null);
 
     const [isGoogleAuth, setIsGoogleAuth] = useState(true);
-    const [formData, setFormData] = useState(
-        {
-            email: "",
-            password: "",
-        }
-    );
-    const [adminFormData,setAdminFormData] = useState({
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+    const [adminFormData, setAdminFormData] = useState({
         secretCode: "",
         email: "",
         password: ""
-    })
-    const [checkCookie,setCheckCookie] = useState(null)
+    });
+    const [checkCookie, setCheckCookie] = useState(null);
     const [googleFormData, setGoogleFormData] = useState({
         googleAuthName: "",
         googleAuthEmail: "",
     });
-  
 
     useEffect(() => {
         const cookieCheck = Cookies.get("accessToken");
 
-        if (!cookieCheck) {
+        if (!cookieCheck && refreshToken) {
             const giveAccessToken = async () => {
                 try {
-                    if (!refreshToken) return;
-
                     const res = await fetch(`${import.meta.env.VITE_APP_URL}/refresh`, {
                         method: 'POST',
                         credentials: 'include',
@@ -48,9 +42,21 @@ export const AuthProvider = ({ children }) => {
                         const data = await res.json();
                         Cookies.set("accessToken", data.accessToken);
                         setIsLoggedIn(true);
+                        setCheckCookie(Cookies.get("accessToken"));
+                    } else {
+                        // If the refresh token is invalid or expired, remove it and log out
+                        Cookies.remove("refreshToken");
+                        Cookies.remove("accessToken");
+                        setIsLoggedIn(false);
+                        setRefreshToken(null);
                     }
                 } catch (err) {
                     console.log("Error refreshing token", err);
+                    // Handle token refresh failure, perhaps log the user out
+                    Cookies.remove("refreshToken");
+                    Cookies.remove("accessToken");
+                    setIsLoggedIn(false);
+                    setRefreshToken(null);
                 }
             };
 
@@ -62,13 +68,11 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{
             isGoogleAuth,
             formData,
-            
-            setRefreshToken,  
-            setFormData,      
-            setGoogleFormData, 
+            setRefreshToken,
+            setFormData,
+            setGoogleFormData,
             setIsGoogleAuth,
             setCheckCookie,
-            
             adminRefreshToken,
             setAdminFormData,
             adminFormData,
