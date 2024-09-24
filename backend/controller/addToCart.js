@@ -116,22 +116,25 @@ function handleGetLatestPassValues(req,res){
 }
 
 async function handleUpdateProducts(req,res){
-   try{
 
-      const input = req.body
+    try {
+       const input = req.body
 
-     const products = await   productDetail.find({category:input})
+       const products = await  productDetail.find({category:input})
 
-     if(products){
-           return res.json(products)
-     }else{
-      return res.status(404).json("failure")
-     }
+       if(products){
+            return res.json(products)
+        }
+       else
+       {
+       return res.status(404).json("failure")
+       }
 
-
-   }catch(err){
+    }
+    catch(err)
+    {
       console.log("Some error occured",err)
-   }
+    }
 }
 
 function passAllDetails(){

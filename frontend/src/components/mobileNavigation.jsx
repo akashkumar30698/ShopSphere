@@ -71,9 +71,13 @@ function MobileNavigation() {
 
   }, [])
 
-  const handleLayoutGrid = () => {
-    setShowCategory(prev => !prev); 
-  };
+    const handleLayoutGrid = () => {
+     setShowCategory(prev => !prev); 
+     };
+
+    const handleHomeClick = () => {
+     navigate(`/${userId}`)
+    }
 
   
 
@@ -114,7 +118,7 @@ function MobileNavigation() {
           </span>
         </button>
 
-        <button className="action-btn">
+        <button onClick={handleHomeClick} className="action-btn">
           <House />
         </button>
 
