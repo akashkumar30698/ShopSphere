@@ -194,7 +194,7 @@ function Login() {
         <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => console.log("Google Login Failed")} />
         <p className="text-sm font-light text-gray-500 dark:text-gray-400">
           Don’t have an account yet?{" "}
-          <Link to="/signUp" className="font-medium color hover:underline dark:text-black-500">
+          <Link to="/signUp" className="font-medium text-black-900 hover:underline dark:text-black-500">
             Sign up
           </Link>
         </p>
