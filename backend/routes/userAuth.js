@@ -20,7 +20,7 @@ router.post("/login",handleUserLogin)
 router.post("/signUP",handleUserSignUP)
 
 //All Products
-router.get("/:userId/all-products",handleGetAllProducts)
+router.get("/all-products",handleGetAllProducts)
    
 
 //Product Payment CheckOut
