@@ -155,8 +155,22 @@ async function handlePaymentVerification(req, res) {
 
                 io.emit("initiaterUserId", getDetailsFromDB)
 
+/*
+                return res.json({
+                    initiaterUserId:initiaterUserId,
+                    storeHashed:storeHashed,
+                    userId:userId
+                })
+                    */
+
                 return res.redirect(`${process.env.REACT_API_URL}/${initiaterUserId}/paymentMadeByOther?hashed=${storeHashed}&initiaterUserId=${userId}`);
             }
+            /*
+            return res.json({
+                userId:userId,
+                selfHashed:selfHashed
+            })
+                */
 
             return res.redirect(`${process.env.REACT_API_URL}/${userId}/paymentSuccess?selfHashed=${selfHashed}`);
         } else {
