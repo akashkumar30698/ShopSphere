@@ -1,5 +1,7 @@
 const { productDetail } = require("../model/product")
 const { uploadOnCloudinary } = require("../cloudinary/cloudinary")
+const cors = require("cors")
+
 
 async function handleAddVendorProduct(req,res){
     try{
@@ -85,18 +87,20 @@ async function handleDeleteProduct(req,res){
 }
 
 
+async function handleGetAllProducts(req, res) {
+  // Enable CORS for this route
+  cors()(req, res, async () => {
+    try {
+      const allProducts = await productDetail.find()
 
-async function handleGetAllProducts(req,res){
-     try{
-          const allProducts =  await productDetail.find()
-          
-          return res.json({
-            allProduct: allProducts
-          })
-
-     }catch(err){
-      console.log("Some error occured",err)
-     }
+      return res.json({
+        allProduct: allProducts,
+      })
+    } catch (err) {
+      console.log("Some error occurred", err)
+      return res.status(500).json({ error: "Internal server error" })
+    }
+  })
 }
 
 module.exports = {

@@ -33,28 +33,25 @@ function VendorSell() {
 
         console.log(data);
 
-        if (data.initialVendorStatus == 'Pending' && !data.updatedVendorStatus) {
+        if (data.status == 'Pending') {
           setIsApproved(false); 
           setIsRejected(false);
           setIsPending(true);
-          console.log("1 executed");
         } 
-        else if(data.initialVendorStatus == "Approved"){
+        else if(data.status == 'Approved'){
            setIsApproved(true)
            setIsPending(false)
            setIsRejected(false)
         }
-        else if (data.initialVendorStatus == 'Pending' && (data.updatedVendorStatus == 'Approved' || data.initialVendorStatus == 'Approved')) {
-          setIsApproved(true); 
-          setIsRejected(false);
-          setIsPending(false);
-          console.log("2 executed");
-        } 
-        else if (data.initialVendorStatus == 'Pending' && (data.updatedVendorStatus == 'Rejected' || data.initialVendorStatus == 'Rejected')) {
-          setIsApproved(false);
-          setIsPending(false);
+        else if (data.status == 'Rejected') {
+          setIsApproved(false); 
           setIsRejected(true);
-          console.log("3 executed");
+          setIsPending(false);
+        } 
+        else {
+          setIsApproved(false);
+          setIsPending(true);
+          setIsRejected(false);
         }
       }
     } catch (err) {
@@ -64,6 +61,7 @@ function VendorSell() {
       setIsPending(true);
     }
   };
+
 
   useEffect(() => {
     const socket = io(import.meta.env.VITE_APP_URL, {
@@ -102,13 +100,60 @@ function VendorSell() {
     };
   }, []);
 
+  useEffect(()=>{
+    fetchVendorStatus()
+  },[isApproved])
+
+
+
   return (
-    <>
+    <div className="vendor-container">
       <VendorNavbar />
-      {isApproved && <p>Approved</p>}
-      {isRejected && <p>Rejected</p>}
-      {isPending && <p>Pending</p>}
-    </>
+      <div className="status-container">
+        <div className="status-card">
+          <div className="card-header">
+            <h2>Vendor Application Status</h2>
+          </div>
+          <div className="card-content">
+            <table className="status-table">
+              <tbody>
+                <tr>
+                  <td className="label">Status</td>
+                  <td>
+                    {isApproved && (
+                      <span className="status-badge approved">
+                        <i className="fas fa-check-circle"></i>
+                        Approved
+                      </span>
+                    )}
+                    {isRejected && (
+                      <span className="status-badge rejected">
+                        <i className="fas fa-times-circle"></i>
+                        Rejected
+                      </span>
+                    )}
+                    {isPending && (
+                      <span className="status-badge pending">
+                        <i className="fas fa-clock"></i>
+                        Pending Review
+                      </span>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="label">Application ID</td>
+                  <td className="value">{userId}</td>
+                </tr>
+                <tr>
+                  <td className="label">Last Updated</td>
+                  <td className="value">{new Date().toLocaleDateString()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

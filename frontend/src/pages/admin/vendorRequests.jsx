@@ -134,53 +134,98 @@ function VendorRequests() {
     updateVendorStatus(id, "Rejected");
   };
   
-
   return (
-    <>
+    <div className="min-h-screen bg-gray-100">
       <Admin />
-      {isRequestedCheck ? (
-        <table>
-          <tbody>
-            {details.map((detail) => (
-              <tr key={detail._id} className="odd:bg-white even:bg-slate-50">
-                <td>{detail.gst}</td>
-                <td>{detail.name}</td>
-                <td>{detail.email}</td>
-
-          
-                {detail.status === "Pending" ?  (
-                  <>
-                    <td>
-                      <button
-                        className="bg-green-700"
-                        onClick={() => handleApproveClick(detail._id)}
-                      >
-                        Approve
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        className="bg-red-700"
-                        onClick={() => handleRejectClick(detail._id)}
-                      >
-                        Reject
-                      </button>
-                    </td>
-                  </>
-                ) : (
-                  <>
-                  <td>{detail.status}</td>
-                  </>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>No Requests Available</p>
-      )}
-    </>
-  );
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-6">Vendor Requests</h1>
+          {isRequestedCheck ? (
+            <div className="overflow-x-auto rounded-lg shadow">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      GST
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Name
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Email
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {details.map((detail) => (
+                    <tr key={detail._id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{detail.gst}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{detail.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{detail.email}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            detail.status === "Approved"
+                              ? "bg-green-100 text-green-800"
+                              : detail.status === "Rejected"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {detail.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        {detail.status === "Pending" && (
+                          <div className="flex space-x-2">
+                            <button
+                              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                              onClick={() => handleApproveClick(detail._id)}
+                            >
+                              Approve
+                            </button>
+                            <button
+                              className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                              onClick={() => handleRejectClick(detail._id)}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">No Requests Available</p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default VendorRequests;

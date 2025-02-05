@@ -1,6 +1,6 @@
 const { newUser } = require("../model/userAuth")
 const nodemailer = require('nodemailer')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 require('dotenv').config()
 
 
@@ -110,10 +110,6 @@ async function handleResetPassword(req,res){
     try{
         const {email,password,confirmPassword,role} = req.body
 
-
-
-
-
         if(email != storeEmail || password != confirmPassword){
               return res.json("failure")
         }
@@ -130,14 +126,8 @@ async function handleResetPassword(req,res){
           return res.json("google-Auth")
         }
  
-
-
-
-
-        
         const saltrounds = 10
         const hashedPassword = await bcrypt.hash(password,saltrounds)
-
 
         await newUser.findOneAndUpdate({email : email,
             role: role,

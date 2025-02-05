@@ -19,6 +19,7 @@ async function handleAdminLogin(req, res) {
     const protectedSecretCode = `${process.env.ADMIN_SECRET_CODE}`
     const protectedEmail = `${process.env.ADMIN_EMAIL}`
     const protectedPassword = `${process.env.ADMIN_PASSWORD}`
+    console.log("data got :",email,protectedEmail)
 
     if (secretCode == protectedSecretCode && email == protectedEmail && password == protectedPassword) {
       //Token Validations
@@ -47,12 +48,9 @@ async function handleAdminLogin(req, res) {
       })
 
     }
-
     else {
       return res.json("failure")
     }
-
-
   }
   catch (err) {
     console.log("Oops some error occured at adminAuth.js", err)
@@ -136,12 +134,15 @@ async function handleGetLatestVendorStatus(req, res) {
     let updatedVendorStatus = null;
 
     // Check if initialVendorStatus is empty or null
-    if (!initialVendorStatus) {
+
+    /*
+
+     if (!initialVendorStatus) {
 
       // Convert userId to ObjectId
       const userObjectId = new mongoose.Types.ObjectId(userId);
 
-      console.log(userObjectId)
+      console.log("object id:",userObjectId)
 
       // Fetch the vendor's latest status from the database
       const refreshedStatus = await newUser.findOne({ _id: userObjectId });
@@ -160,13 +161,29 @@ async function handleGetLatestVendorStatus(req, res) {
         updatedVendorStatus: "", // No update yet, so this is empty
       });
     }
+    
+    */
 
-    console.log(initialVendorStatus, "no ifs");
+     // Convert userId to ObjectId
+     const userObjectId = new mongoose.Types.ObjectId(userId);
+
+     console.log("object id:",userObjectId)
+
+     // Fetch the vendor's latest status from the database
+     const refreshedStatus = await newUser.findOne({ _id: userObjectId });
+
+     // Handle case where user is not found
+     if (!refreshedStatus) {
+       return res.status(404).json({ error: "User not found" });
+     }
+
+     console.log("refreshedStatus from DB :",refreshedStatus)
+   
+
 
     // If `initialVendorStatus` exists, return it and an empty updated status
     return res.json({
-      initialVendorStatus: initialVendorStatus,
-      updatedVendorStatus: "", // No update in this case
+      status: refreshedStatus.status || "no_status_found"
     });
 
   } catch (err) {

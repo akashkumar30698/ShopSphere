@@ -17,11 +17,9 @@ export const LoginProvider = ({ children }) => {
   const [yourOrderDetails,setYourOrderDetails] = useState(false)
   const [isOpen, setIsOpen] = useState(false);
 
-  const [allProducts, setAllProducts] = useState([]);
-
+  const [products, setProducts] = useState([]);
 
   const [isApproved, setIsApproved] = useState(null);
-
 
   const [addressDetails,setAddressDetails] = useState({
     firstName: "",
@@ -36,7 +34,7 @@ export const LoginProvider = ({ children }) => {
 })
                 
   return (                                 
-    <LoginContext.Provider value={{isApproved,setIsApproved,allProducts,setAllProducts,isOpen,setIsOpen,yourOrderDetails,setYourOrderDetails,addressDetails,setAddressDetails,showOptions,setShowOptions,selectedCategory,setSelectedCategory,showCategory,setShowCategory, reRenderOnCrossClick,setReRenderOnCrossClick, isLoggedIn, setIsLoggedIn  ,isAskFriendClick,setIsAskFriendClicked, checkTrue,setCheckTrue,loading,setLoading,showTimer,setShowTimer}}>
+    <LoginContext.Provider value={{isApproved,setIsApproved,products,setProducts,isOpen,setIsOpen,yourOrderDetails,setYourOrderDetails,addressDetails,setAddressDetails,showOptions,setShowOptions,selectedCategory,setSelectedCategory,showCategory,setShowCategory, reRenderOnCrossClick,setReRenderOnCrossClick, isLoggedIn, setIsLoggedIn  ,isAskFriendClick,setIsAskFriendClicked, checkTrue,setCheckTrue,loading,setLoading,showTimer,setShowTimer}}>
       {children}
     </LoginContext.Provider>
   );

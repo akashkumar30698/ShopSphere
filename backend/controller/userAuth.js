@@ -1,5 +1,5 @@
 const { newUser } = require("../model/userAuth")
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const { io } = require("../socketConnect")
 //const { passFrontendHashed } = require("./addToCart")
@@ -198,10 +198,7 @@ async function handleUserLogin(req, res) {
 }
 
 
-
-
 //Refresh Endpoint
-
 async function handleRefresh(req,res){
 
   const {googleAuthName,googleAuthEmail,isGoogleAuth,refreshToken} = req.body

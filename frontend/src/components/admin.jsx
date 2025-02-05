@@ -50,11 +50,11 @@ function Admin() {
 
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                             <div className="flex flex-shrink-0 items-center">
-                            <img style={{
-                display: "block", WebkitUserSelect: "none", margin: "auto",
-                cursor: "zoom-in",
-                backgroundColor: "rgb(111 97 97 / 0%)", transition: "background-color 300ms"
-              }} src="https://evershop.io/img/logo.png" width="30px" height="30px" />
+                                <img style={{
+                                    display: "block", WebkitUserSelect: "none", margin: "auto",
+                                    cursor: "zoom-in",
+                                    backgroundColor: "rgb(111 97 97 / 0%)", transition: "background-color 300ms"
+                                }} src="https://evershop.io/img/logo.png" width="30px" height="30px" />
                             </div>
                             <div className="hidden sm:ml-6 sm:block">
                                 <div className="flex space-x-4">

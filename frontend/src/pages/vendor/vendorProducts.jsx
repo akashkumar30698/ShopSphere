@@ -37,8 +37,6 @@ function VendorProducts() {
         }
     };
 
-
-
     const handleDeleteClick = async (productId) =>{
         try{
              const token = Cookies.get("accessToken")
@@ -70,49 +68,103 @@ function VendorProducts() {
         }
     }
 
-   
-    
-
-
     useEffect(() => {
       fetchProducts()
     }, []);
 
+   
     return (
-        <>
-            <VendorNavbar />
-            {loading && <div>Loading...</div>}
-            {
-                products.length > 0 ? (
-                    products.map((product) => (
-                        <div key={product._id} className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
-                            <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href="#">
-                                <img className="object-cover" src={product.productPhoto} alt="product image" />
-                                
-                            </a>
-                            <div className="mt-4 px-5 pb-5">
-                                <a href="#">
-                                    <h5 className="text-xl tracking-tight text-slate-900">{product.productTitle}</h5>
-                                </a>
-                                <div className="mt-2 mb-5 flex items-center justify-between">
-                                    <p>
-                                        <span className="text-3xl font-bold text-slate-900">{product.productPrice}</span>
-                                    </p>
-                                    <button onClick={()=> handleDeleteClick(product._id)} className="text-red-500 hover:text-red-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" id="delete"><path fill="#000" d="M15 3a1 1 0 0 1 1 1h2a1 1 0 1 1 0 2H6a1 1 0 0 1 0-2h2a1 1 0 0 1 1-1h6Z"></path><path fill="#000" fillRule="evenodd" d="M6 7h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7Zm3.5 2a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 1 0v-9a.5.5 0 0 0-.5-.5Zm5 0a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 1 0v-9a.5.5 0 0 0-.5-.5Z" clipRule="evenodd"></path></svg></button>  
-                                </div>
-                                <a href="#" className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                                    See Details
-                                </a> 
-                            </div>
-                        </div> 
-                    ))
-                ) : (
-                    <p>No products found</p>
-                )
-            }
-        </>
-    );
+        <div className="min-h-screen bg-gray-100">
+          <VendorNavbar />
+          <div className="container mx-auto px-4 py-8">
+            <h1 className="text-2xl font-bold mb-6">Your Products</h1>
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+              </div>
+            ) : products.length > 0 ? (
+              <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Product Image
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Product Title
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Product Price
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {products.map((product) => (
+                        <tr key={product._id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <img
+                              src={product.productPhoto || "/placeholder.svg"}
+                              alt="product"
+                              className="w-16 h-16 object-cover rounded-md"
+                            />
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{product.productTitle}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">${product.productPrice.toFixed(2)}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button
+                              onClick={() => handleDeleteClick(product._id)}
+                              className="text-red-600 hover:text-red-900 transition duration-150 ease-in-out"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white shadow-md rounded-lg p-6 text-center">
+                <p className="text-gray-500">No products found</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )
 }
 
 export default VendorProducts;

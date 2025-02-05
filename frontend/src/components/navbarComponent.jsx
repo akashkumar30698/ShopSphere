@@ -22,11 +22,11 @@ function NavbarComponent() {
   const getCountFromHero = getCount()
   const navigate = useNavigate()
 
-  const { isLoggedIn, setIsLoggedIn ,setAllProducts } = useLogin()
+  const { isLoggedIn, products, setIsLoggedIn, setProducts } = useLogin()
 
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  
+
   // Sample data list
   const items = ['Clothes', 'Footwear', 'Jewelry', 'Perfume', 'Cosmetics', 'Glasses', 'Bags'];
 
@@ -47,41 +47,44 @@ function NavbarComponent() {
 
   // Function to handle suggestion click
   const handleSuggestionClick = (suggestion) => {
-    setInput(suggestion); 
-    setSuggestions([]); 
+    setInput(suggestion);
+    setSuggestions([]);
   };
 
 
 
-  const updateProductsOnSearchClick  = async (input) => {
+  const updateProductsOnSearchClick = async (input) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_APP_URL}/updateProducts?input=${input}`, {
+        method: 'GET',
+      });
 
-         try{
-          const res = await fetch(`${import.meta.env.VITE_APP_URL}/updateProducts?input=${input}`, {
-            method: 'GET',
-          });  
-          
-            if(res.ok){
-                const data = await res.json()
-                setAllProducts(data) 
-            }
+      if (res.ok) {
+        const data = await res.json()
+        if (data.length > 0) {
+          setProducts(data)
+        } else {
+          const filteredProducts = products.filter(product => product.category === input);
+          setProducts(filteredProducts)
+        }
+      }
+    } catch (err) {
+      const filteredProducts = products.filter(product => product.category === input);
+      setProducts(filteredProducts)
 
-         }catch(err){
-          console.log("Some error occured",err)
-         }
+      console.log("Some error occured", err)
+    }
   }
 
 
   const handleSearchBarClick = () => {
-        updateProductsOnSearchClick(input)
-        setInput('')
+    updateProductsOnSearchClick(input)
+    setInput('')
   }
-
 
   const handleShowDropDown = () => {
     setShowDropDown(!showDropDown)
   }
-
-
 
   const handleLogoutClick = () => {
     setIsLoggedIn(false);
@@ -92,7 +95,6 @@ function NavbarComponent() {
 
     navigate("/")
   }
-
 
   useEffect(() => {
     const getCookie = Cookies.get("accessToken")
@@ -125,8 +127,6 @@ function NavbarComponent() {
     }
   }, [count])
 
-
-
   const handleAddToCartButtonClick = () => {
     if (cart) {
       if (userId) {
@@ -139,21 +139,15 @@ function NavbarComponent() {
   }
 
   useEffect(() => {
-
     const token = Cookies.get("accessToken")
-
     if (!token) {
       localStorage.removeItem("cart")
     }
-
   }, [])
-
 
   const handleYourOrdersButtonClick = () => {
     navigate(`/${userId}/yourOrders`)
   }
-
-
 
   return (
 
@@ -221,8 +215,8 @@ function NavbarComponent() {
                 }} />
               <button
 
-                 onClick={handleSearchBarClick}
-                 style={{
+                onClick={handleSearchBarClick}
+                style={{
                   position: "absolute",
                   top: "50%",
                   right: "10px",
@@ -363,11 +357,7 @@ function NavbarComponent() {
           </div>
         </div>
       </header>
-
-
       {/* Mobile Navigation */}
-
-
 
     </>
   );
