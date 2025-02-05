@@ -51,8 +51,6 @@ function NavbarComponent() {
     setSuggestions([]);
   };
 
-
-
   const updateProductsOnSearchClick = async (input) => {
     try {
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/updateProducts?input=${input}`, {
@@ -75,7 +73,6 @@ function NavbarComponent() {
       console.log("Some error occured", err)
     }
   }
-
 
   const handleSearchBarClick = () => {
     updateProductsOnSearchClick(input)

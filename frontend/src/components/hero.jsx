@@ -5,6 +5,7 @@ import { addToCartOnClick, increment } from "../slices/createSlices.jsx"
 import { useParams, useNavigate } from "react-router-dom"
 import { useLogin } from "../ContextApi/loginContext.jsx"
 import "../App.css"
+import LoadingSkeleton from "./skeletonCard.jsx"
 
 // Helper function to get the total quantity in the cart
 export const getCount = () => {
@@ -388,22 +389,13 @@ function Hero() {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {loading
-          ? Array(8)
-              .fill(0)
-              .map((_, index) => (
-                <div
-                  key={index}
+        {true
+          ?    <div
                   className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
                 >
-                  <div className="relative h-48 overflow-hidden bg-gray-300"></div>
-                  <div className="p-4">
-                    <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
-                    <div className="h-6 bg-gray-300 rounded w-1/2 mb-4"></div>
-                    <div className="h-10 bg-gray-300 rounded w-full"></div>
-                  </div>
+                  <LoadingSkeleton/>
+
                 </div>
-              ))
           : products.length > 0
           ? products.map((product) => (
               <div
