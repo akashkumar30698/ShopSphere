@@ -389,7 +389,7 @@ function Hero() {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {true
+        {loading
           ?    <div
                   className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
                 >
