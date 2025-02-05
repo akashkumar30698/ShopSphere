@@ -304,11 +304,13 @@ function Hero() {
   const { products ,setProducts } = useLogin()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(true)
   const { userId } = useParams()
 
   // Function to fetch all products
   const fetchAllProducts = async () => {
     try {
+      setLoading(true)
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/all-products`, {
         method: "GET",
       })
@@ -324,6 +326,8 @@ function Hero() {
       console.error("Error fetching products:", err)
       setProducts(dummyProducts) // Fallback to dummy products in case of error
 
+    }finally {
+      setLoading(false)
     }
   }
 
@@ -384,52 +388,70 @@ function Hero() {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div
-              key={product._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  className="w-full h-full object-cover"
-                  src={product.productPhoto || "/placeholder.svg"}
-                  alt={product.productTitle}
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{product.productTitle}</h3>
-                <p className="text-2xl font-bold text-indigo-600 mb-4">{product.productPrice}</p>
-                <button
-                  onClick={() =>
-                    handleAddToCart(product._id, product.productPhoto, product.productTitle, product.productPrice)
-                  }
-                  className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center"
+        {loading
+          ? Array(8)
+              .fill(0)
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                  <div className="h-48 bg-gray-300"></div>
+                  <div className="p-4">
+                    <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+                    <div className="h-6 bg-gray-300 rounded w-1/2 mb-4"></div>
+                    <div className="h-10 bg-gray-300 rounded w-full"></div>
+                  </div>
+                </div>
+              ))
+          : products.length > 0
+          ? products.map((product) => (
+              <div
+                key={product._id}
+                className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    className="w-full h-full object-cover"
+                    src={product.productPhoto || "/placeholder.svg"}
+                    alt={product.productTitle}
+                  />
+                </div>
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+                    {product.productTitle}
+                  </h3>
+                  <p className="text-2xl font-bold text-indigo-600 mb-4">{product.productPrice}</p>
+                  <button
+                    onClick={() =>
+                      handleAddToCart(product._id, product.productPhoto, product.productTitle, product.productPrice)
+                    }
+                    className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                  Add to Cart
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                    Add to Cart
+                  </button>
+                </div>
               </div>
+            ))
+          : (
+            <div className="col-span-full text-center text-gray-500 py-8">
+              <p className="text-xl">No Products Available</p>
             </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center text-gray-500 py-8">
-            <p className="text-xl">No Products Available</p>
-          </div>
-        )}
+          )}
       </div>
     </div>
   )
