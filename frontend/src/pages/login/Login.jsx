@@ -163,7 +163,7 @@ function Login() {
                     id="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg dark:bg-white-700 dark:border-gray-600 dark:text-white block w-full p-2.5"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg dark:bg-black-700 dark:border-gray-600 dark:text-black block w-full p-2.5"
                     placeholder="name@company.com"
                     required
                   />
