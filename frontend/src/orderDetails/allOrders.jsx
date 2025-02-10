@@ -70,7 +70,8 @@ function AllOrders() {
 
     return (
         <>
-            <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+                <div className="bg-black min-h-screen">
+                <section className="bg-black py-8 antialiased  md:py-16">
                 <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
                     <div className="mx-auto max-w-5xl">
                         <div className="gap-4 sm:flex sm:items-center sm:justify-between">
@@ -161,6 +162,9 @@ function AllOrders() {
                     </div>
                 </div>
             </section>
+                    </div>
+
+       
         </>
     )
 }

@@ -7,6 +7,8 @@ import { useLogin } from "../ContextApi/loginContext.jsx"
 import "../App.css"
 import LoadingSkeleton from "./skeletonCard.jsx"
 import { checkCookie } from "../utils/checkCookie.js"
+import { Loader } from "lucide-react" // Import Lucide Loader
+
 
 // Helper function to get the total quantity in the cart
 export const getCount = () => {
@@ -21,7 +23,7 @@ const dummyProducts = [
     productTitle: "Luxury Lipstick Set",
     productPhoto:
       "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,999",
+    productPrice: "₹2999",
     category: "Cosmetics",
   },
   {
@@ -29,7 +31,7 @@ const dummyProducts = [
     productTitle: "Natural Eyeshadow Palette",
     productPhoto:
       "https://images.unsplash.com/photo-1596704017254-9b121068fb31?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,499",
+    productPrice: "₹1499",
     category: " Cosmetics",
   },
   {
@@ -53,7 +55,7 @@ const dummyProducts = [
     productTitle: "Skin Brightening Serum",
     productPhoto:
       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,799",
+    productPrice: "₹1799",
     category: "Cosmetics",
   },
   // Clothes
@@ -70,7 +72,7 @@ const dummyProducts = [
     productTitle: "Slim Fit Jeans",
     productPhoto:
       "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,999",
+    productPrice: "₹1999",
     category: "Clothes",
   },
   {
@@ -78,7 +80,7 @@ const dummyProducts = [
     productTitle: "Floral Summer Dress",
     productPhoto:
       "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,499",
+    productPrice: "₹1499",
     category: "Clothes",
   },
   {
@@ -86,7 +88,7 @@ const dummyProducts = [
     productTitle: "Formal Blazer",
     productPhoto:
       "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹3,999",
+    productPrice: "₹3999",
     category: "Clothes",
   },
   {
@@ -94,7 +96,7 @@ const dummyProducts = [
     productTitle: "Cozy Knit Sweater",
     productPhoto:
       "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,799",
+    productPrice: "₹1799",
     category: "Clothes",
   },
   // Footwear
@@ -103,7 +105,7 @@ const dummyProducts = [
     productTitle: "Running Shoes",
     productPhoto:
       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹3,499",
+    productPrice: "₹3499",
     category: "Footwear",
   },
   {
@@ -111,7 +113,7 @@ const dummyProducts = [
     productTitle: "Leather Formal Shoes",
     productPhoto:
       "https://images.unsplash.com/photo-1614252369475-531eba835eb1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,999",
+    productPrice: "₹2999",
     category: "Footwear",
   },
   {
@@ -126,7 +128,7 @@ const dummyProducts = [
     productTitle: "Stylish Sneakers",
     productPhoto:
       "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,799",
+    productPrice: "₹1799",
     category: "Footwear",
   },
   {
@@ -134,7 +136,7 @@ const dummyProducts = [
     productTitle: "Ankle Boots",
     productPhoto:
       "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,499",
+    productPrice: "₹2499",
     category: "Footwear",
   },
   // Jewelry
@@ -143,7 +145,7 @@ const dummyProducts = [
     productTitle: "Diamond Stud Earrings",
     productPhoto:
       "https://images.unsplash.com/photo-1617038220319-276d3cfab638?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹9,999",
+    productPrice: "₹9999",
     category: "Jewelry",
   },
   {
@@ -151,7 +153,7 @@ const dummyProducts = [
     productTitle: "Gold Chain Necklace",
     productPhoto:
       "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹15,999",
+    productPrice: "₹15999",
     category: "Jewelry",
   },
   {
@@ -159,7 +161,7 @@ const dummyProducts = [
     productTitle: "Silver Charm Bracelet",
     productPhoto:
       "https://images.unsplash.com/photo-1611652022419-a9419f74343d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹3,999",
+    productPrice: "₹3999",
     category: "Jewelry",
   },
   {
@@ -167,7 +169,7 @@ const dummyProducts = [
     productTitle: "Pearl Drop Earrings",
     productPhoto:
       "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹4,999",
+    productPrice: "₹4999",
     category: "Jewelry",
   },
   {
@@ -175,7 +177,7 @@ const dummyProducts = [
     productTitle: "Rose Gold Ring",
     productPhoto:
       "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹7,999",
+    productPrice: "₹7999",
     category: "Jewelry",
   },
   // Perfume
@@ -184,7 +186,7 @@ const dummyProducts = [
     productTitle: "Floral Essence Perfume",
     productPhoto:
       "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹4,999",
+    productPrice: "₹4999",
     category: "Perfume",
   },
   {
@@ -192,7 +194,7 @@ const dummyProducts = [
     productTitle: "Woody Musk Cologne",
     productPhoto:
       "https://images.unsplash.com/photo-1594035910387-fea47794261f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹3,999",
+    productPrice: "₹3999",
     category: "Perfume",
   },
   {
@@ -200,7 +202,7 @@ const dummyProducts = [
     productTitle: "Citrus Burst Fragrance",
     productPhoto:
       "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,999",
+    productPrice: "₹2999",
     category: "Perfume",
   },
   {
@@ -208,7 +210,7 @@ const dummyProducts = [
     productTitle: "Oriental Spice Perfume",
     productPhoto:
       "https://images.unsplash.com/photo-1523293182086-7651a899d37f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹5,499",
+    productPrice: "₹5499",
     category: "Perfume",
   },
   {
@@ -216,7 +218,7 @@ const dummyProducts = [
     productTitle: "Fresh Aqua Scent",
     productPhoto:
       "https://images.unsplash.com/photo-1617897903246-719242758050?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹3,499",
+    productPrice: "₹3499",
     category: "Perfume",
   },
   // Glasses
@@ -225,7 +227,7 @@ const dummyProducts = [
     productTitle: "Classic Aviator Sunglasses",
     productPhoto:
       "https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,499",
+    productPrice: "₹2499",
     category: "Glasses",
   },
   {
@@ -233,14 +235,14 @@ const dummyProducts = [
     productTitle: "Blue Light Blocking Glasses",
     productPhoto:
       "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,999",
+    productPrice: "₹1999",
     category: "Glasses",
   },
   {
     _id: "703",
     productTitle: "Vintage Round Eyeglasses",
     productPhoto: "https://goeye.in/cdn/shop/files/VG005MG5028-3_1800x1800.jpg?v=1722945324",
-    productPrice: "₹1,799",
+    productPrice: "₹1799",
     category: "Glasses",
   },
   {
@@ -248,7 +250,7 @@ const dummyProducts = [
     productTitle: "Sports Wrap Sunglasses",
     productPhoto:
       "https://images.unsplash.com/photo-1625591341337-13dc6e871cee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,999",
+    productPrice: "₹2999",
     category: "Glasses",
   },
   {
@@ -256,7 +258,7 @@ const dummyProducts = [
     productTitle: "Cat Eye Reading Glasses",
     productPhoto:
       "https://images.unsplash.com/photo-1591076482161-42ce6da69f67?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,499",
+    productPrice: "₹1499",
     category: "Glasses",
   },
   // Bags
@@ -265,7 +267,7 @@ const dummyProducts = [
     productTitle: "Leather Tote Bag",
     productPhoto:
       "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹4,999",
+    productPrice: "₹4999",
     category: "Bags",
   },
   {
@@ -273,7 +275,7 @@ const dummyProducts = [
     productTitle: "Canvas Backpack",
     productPhoto:
       "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,499",
+    productPrice: "₹2499",
     category: "Bags",
   },
   {
@@ -281,14 +283,14 @@ const dummyProducts = [
     productTitle: "Crossbody Sling Bag",
     productPhoto:
       "https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹1,999",
+    productPrice: "₹1999",
     category: "Bags",
   },
   {
     _id: "804",
     productTitle: "Travel Duffel Bag",
     productPhoto: "https://m.media-amazon.com/images/I/41Rsjtx3L8L._SY300_SX300_.jpg",
-    productPrice: "₹3,499",
+    productPrice: "₹3499",
     category: "Bags",
   },
   {
@@ -296,67 +298,68 @@ const dummyProducts = [
     productTitle: "Evening Clutch Purse",
     productPhoto:
       "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80",
-    productPrice: "₹2,999",
+    productPrice: "₹2999",
     category: "Bags",
   },
 ]
 
 function Hero() {
 
-  const { products ,setProducts,setIsLoggedIn } = useLogin()
+  const { products, setProducts, setIsLoggedIn } = useLogin()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
+  const [cartLoading, setCartLoading] = useState(null)
   const { userId } = useParams()
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    const check = async () =>{
+    const check = async () => {
       try {
         const cookie = await checkCookie("accessToken")
-        if(cookie){
+        if (cookie) {
           setIsLoggedIn(true)
           return
         }
 
         setIsLoggedIn(false)
       } catch (error) {
-         console.log("some error occured :",error)
+        console.log("some error occured :", error)
       }
     }
 
     check()
 
-  },[])
+  }, [])
 
   // Function to fetch all products
   const fetchAllProducts = async () => {
     try {
       setLoading(true)
-         // Timeout function that rejects after 3 seconds
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Request timed out")), 3000)
-    );
+      // Timeout function that rejects after 3 seconds
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 3000)
+      );
 
-    // Fetch API call
-    const fetchPromise = fetch(`${import.meta.env.VITE_APP_URL}/all-products`, {
-      method: "GET",
-    }).then(res => {
-      if (!res.ok) throw new Error("Failed to fetch products");
-      return res.json();
-    });
+      // Fetch API call
+      const fetchPromise = fetch(`${import.meta.env.VITE_APP_URL}/all-products`, {
+        method: "GET",
+      }).then(res => {
+        if (!res.ok) throw new Error("Failed to fetch products");
+        return res.json();
+      });
 
-    // Race between fetch and timeout
-    const data = await Promise.race([fetchPromise, timeoutPromise]);
+      // Race between fetch and timeout
+      const data = await Promise.race([fetchPromise, timeoutPromise]);
 
-    console.log("data :", data);
-    setProducts(data.allProduct.length > 0 ? data.allProduct : dummyProducts);
+      console.log("data :", data);
+      setProducts(data.allProduct.length > 0 ? data.allProduct : dummyProducts);
     } catch (err) {
       console.error("Error fetching products:", err)
       setProducts(dummyProducts) // Fallback to dummy products in case of error
 
-    }finally {
+    } finally {
       setLoading(false)
     }
   }
@@ -364,10 +367,12 @@ function Hero() {
   // Add to cart functionality
   const handleAddToCart = useCallback(
     async (productId, productPhoto, productTitle, productPrice) => {
-      const token =  await checkCookie("accessToken")
+      setCartLoading(productId) // Start loading animation
+      const startTime = Date.now() // Capture the start time
+      const token = await checkCookie("accessToken")
 
       if (!token) {
-        console.log("token:",token)
+        console.log("token:", token)
         navigate("/login")
         return
       }
@@ -407,6 +412,12 @@ function Hero() {
 
       localStorage.setItem("cart", JSON.stringify(existingCart))
       getCount()
+
+      // Calculate remaining time to ensure at least 1s delay
+      const elapsedTime = Date.now() - startTime
+      const remainingTime = Math.max(1000 - elapsedTime, 0)
+
+      setTimeout(() => setCartLoading(null), remainingTime) // Ensure at least 1s loading
     },
     [dispatch, navigate, userId],
   )
@@ -419,14 +430,14 @@ function Hero() {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Featured Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {loading ?    
-              <div
-                  className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
-                >
-                  <LoadingSkeleton/>
-                </div>
+        {loading ?
+          <div
+            className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+          >
+            <LoadingSkeleton />
+          </div>
           : products.length > 0
-          ? products.map((product) => (
+            ? products.map((product) => (
               <div
                 key={product._id}
                 className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
@@ -449,30 +460,36 @@ function Hero() {
                     }
                     className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                    Add to Cart
+                    {cartLoading === product._id ? (
+                      <Loader className="animate-spin" size={20} />
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                        Add to Cart
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
             ))
-          : (
-            <div className="col-span-full text-center text-gray-500 py-8">
-              <p className="text-xl">No Products Available</p>
-            </div>
-          )}
+            : (
+              <div className="col-span-full text-center text-gray-500 py-8">
+                <p className="text-xl">No Products Available</p>
+              </div>
+            )}
       </div>
     </div>
   )
