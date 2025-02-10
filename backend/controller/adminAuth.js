@@ -27,18 +27,18 @@ async function handleAdminLogin(req, res) {
       const refreshToken = jwt.sign({ secretCode: secretCode, email: email, password: password }, `${process.env.REFRESH_SECRET_TOKEN}`);
 
 
-      /*
-   const options = {
-    httpOnly: true,
-    secure: process.env.COOKIE_SECURE,
-    sameSite: 'None',
-    maxAge: 10 * 60 * 1000,  
-   };
-
-    */
-
-
-      res.cookie("accessToken", accessToken)
+      
+      const options = {
+        httpOnly: JSON.parse(process.env.COOKIE_HTTP_ONLY || "true"), // Defaults to true
+        secure: JSON.parse(process.env.COOKIE_SECURE || "false"), // Should be true in production (HTTPS)
+        sameSite: "None", // Required for cross-origin cookies
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds   
+       };
+      
+      // Set cookie
+      res.cookie("accessToken", accessToken, options);
+    //  res.json({ success: true, message: "Cookie set successfully!" });
+      
 
 
       return res.json({

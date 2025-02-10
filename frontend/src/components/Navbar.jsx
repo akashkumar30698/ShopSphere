@@ -15,6 +15,7 @@ import Category from "./category.jsx";
 import MobileNavigation from "./mobileNavigation.jsx";
 import "../App.css"
 import YourOrdersDetails from "./yourDetailsSideBar.jsx";
+import { checkCookie } from "../utils/checkCookie.js";
 
 
 export async function getUserId(token, navigate) {
@@ -61,10 +62,16 @@ function Navbar() {
  
 
   useEffect(() => {
-    const token = Cookies.get("accessToken")
-    if (isHashed) {
-      getLatestValues(token, isHashed, userId, navigate)
+
+    const check = async () =>{
+      const token = await checkCookie("accessToken")
+      if (isHashed) {
+        getLatestValues(token, isHashed, userId, navigate)
+      }
     }
+
+    check()
+   
 
   }, [])
 
@@ -132,7 +139,7 @@ function Navbar() {
          </div>
 
          <div className="widthHF overflowing flexy">
-          <Hero  />
+          <Hero/>
          </div>
       </div>
 

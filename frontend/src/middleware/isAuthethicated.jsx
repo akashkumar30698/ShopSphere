@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSearchParams } from 'react-router-dom';
 import { handleBuyProduct } from "../pages/address/address.jsx"
+import { checkCookie } from "../utils/checkCookie.js";
 
 
 // Function to get latest values from the server
@@ -42,14 +43,19 @@ function IsAuthenticated() {
     console.log(userId)
 
     useEffect(() => {
-        const token = Cookies.get("accessToken");
 
-        if (!token) {
-            setIsNotAuthenticated(true);
-        } else {
-            setIsNotAuthenticated(false);
-            getLatestValues(token,isHashed,userId,navigate);  
+        const check = async () =>{
+            const token = await checkCookie("accessToken")
+
+            if (!token) {
+                setIsNotAuthenticated(true);
+            } else {
+                setIsNotAuthenticated(false);
+                getLatestValues(token,isHashed,userId,navigate);  
+            }
         }
+         check()
+        
     }, []);
 
 

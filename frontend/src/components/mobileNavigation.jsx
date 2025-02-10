@@ -7,6 +7,7 @@ import Cookies from "js-cookie"
 import "../components/mobileNavigation.jsx"
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '../ContextApi/loginContext.jsx';
+import { checkCookie } from '../utils/checkCookie.js';
 import YourOrdersDetails from './yourDetailsSideBar.jsx';
 
 
@@ -43,11 +44,17 @@ function MobileNavigation() {
 
 
   useEffect(() => {
-    const token = Cookies.get("accessToken")
-    setCount(getCountFromHero)
-    if (!token) {
-      return
+
+    const check = async () =>{
+      const token = await checkCookie("accessToken")
+       setCount(getCountFromHero)
+       if (!token) {
+        return
+       }
     }
+
+    check()
+   
   }, [getCountFromHero])
 
 
@@ -63,11 +70,15 @@ function MobileNavigation() {
 
   useEffect(() => {
 
-    const token = Cookies.get("accessToken")
-
-    if (!token) {
-      localStorage.removeItem("cart")
+    const check = async () =>{
+    const token = await checkCookie("accessToken")
+      if (!token) {
+        localStorage.removeItem("cart")
+      }
     }
+
+    check()
+  
 
   }, [])
 

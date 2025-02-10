@@ -1,5 +1,6 @@
 import { useParams,Link,useNavigate,useSearchParams} from "react-router-dom"
 import { useEffect } from "react"
+import { checkCookie } from "../utils/checkCookie";
 
 
 
@@ -36,10 +37,14 @@ function PaymentMadeByOther() {
 
 
 
-    const handleHomePageClick = () => {
+    const handleHomePageClick = async () => {
             navigate(`/${currentUserId}`)
 
-            const token = Cookies.get("accessToken")
+            const token = await checkCookie("accessToken")
+            if(!token){
+              console.log("no cookie found")
+              return
+            }
             passPaymentMadeByUserId(token,currentUserId)
     }
 

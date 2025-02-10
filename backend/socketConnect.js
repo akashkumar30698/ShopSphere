@@ -5,9 +5,15 @@ const express = require('express');
 const app = express();
 const server = createServer(app);
 
+
+/**
+ * 
+ * 
+ * 
+ */
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173', // Ensure this matches your React app URL
+    origin: `${process.env.REACT_API_URL}`, // Ensure this matches your React app URL
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
   },

@@ -8,6 +8,7 @@ import { getUserId } from "./Navbar";
 import { useLogin } from "../ContextApi/loginContext";
 import { getCount } from "./hero";
 import { useSelector } from "react-redux";
+import { checkCookie } from "../utils/checkCookie";
 
 
 function NavbarComponent() {
@@ -85,33 +86,37 @@ function NavbarComponent() {
 
   const handleLogoutClick = () => {
     setIsLoggedIn(false);
-
+    console.log("isLoggedIn :",isLoggedIn)
     Cookies.remove("accessToken", { path: "/" });
-
     localStorage.removeItem("cart")
-
     navigate("/")
   }
 
   useEffect(() => {
-    const getCookie = Cookies.get("accessToken")
+  const check =  async () =>{
+   const getCookie = await checkCookie("accessToken")
     if (getCookie || getCookie != null) {
-
-      getUserId(getCookie, navigate)
-      setIsLoggedIn(true)
+   //   getUserId(getCookie, navigate)
+   //   setIsLoggedIn(true)
     }
     else if (!getCookie || getCookie == null) {
-      navigate("/")
+   //   navigate("/")
     }
-
+  }
+  check()
   }, [isLoggedIn])
 
   useEffect(() => {
-    const token = Cookies.get("accessToken")
-    setCount(getCountFromHero)
-    if (!token) {
-      return
+
+    const check = async () =>{
+      const token = await checkCookie("accessToken")
+      setCount(getCountFromHero)
+      if (!token) {
+        return
+      }
     }
+    check()
+   
   }, [getCountFromHero])
 
 
@@ -136,10 +141,16 @@ function NavbarComponent() {
   }
 
   useEffect(() => {
-    const token = Cookies.get("accessToken")
-    if (!token) {
-      localStorage.removeItem("cart")
+
+    const check = async () =>{
+      const token = await checkCookie("accessToken")
+      if (!token) {
+        localStorage.removeItem("cart")
+      }
     }
+
+    check()
+   
   }, [])
 
   const handleYourOrdersButtonClick = () => {
@@ -277,8 +288,6 @@ function NavbarComponent() {
                           </button>
                         </div>
                       </>
-
-
                     ) : (
                       <>
                         <div className="login-fix">
@@ -291,7 +300,6 @@ function NavbarComponent() {
                           <Link to="/vendor/login" className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-black-700">
                             Vendor Login
                           </Link>
-
                         </div>
 
                       </>

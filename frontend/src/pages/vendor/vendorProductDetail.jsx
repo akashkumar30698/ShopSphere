@@ -4,6 +4,7 @@ import VendorNavbar from "../../components/VendorNavbar"
 import { useParams } from "react-router-dom";
 import { useLogin } from "../../ContextApi/loginContext";
 import "../../App.css"
+import { checkCookie } from "../../utils/checkCookie";
 
 
 function VendorProductDetail() {
@@ -115,7 +116,7 @@ function VendorProductDetail() {
         }
 
 
-        const token = Cookies.get("accessToken")
+        const token = await checkCookie("accessToken")
 
         if (!token) {
             return;

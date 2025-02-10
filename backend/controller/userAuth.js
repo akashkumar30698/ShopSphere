@@ -15,249 +15,271 @@ let regularHash = ""
 
 //Login
 async function handleUserLogin(req, res) {
- 
- try {
 
-  //Google Auth Login or SignUP(If not exists)
-  const {given_name,googleEmail,picture,isGoogleAuth ,isHashedGoogle} = req.body
+  try {
 
-   if(isGoogleAuth == true) {
+    //Google Auth Login or SignUP(If not exists)
+    const { given_name, googleEmail, picture, isGoogleAuth, isHashedGoogle } = req.body
 
-    const googleEmailExist = await newUser.findOne({email: googleEmail })
-  
-    if(googleEmailExist){
-           
-       //Token Validations
-       const accessToken = generateAccessToken({ name: googleEmailExist.name, email: googleEmailExist.email});
-       const refreshToken = jwt.sign({ name: googleEmailExist.name, email: googleEmailExist.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
-    
-        
-       
-       const options = {
-        httpOnly: true,
-        secure: process.env.COOKIE_SECURE,
-        sameSite: 'None',
-        maxAge: 10 * 60 * 1000,  
-       };
-       
+    if (isGoogleAuth == true) {
+
+      const googleEmailExist = await newUser.findOne({ email: googleEmail })
+
+      if (googleEmailExist) {
+
+        //Token Validations
+        const accessToken = generateAccessToken({ name: googleEmailExist.name, email: googleEmailExist.email });
+        const refreshToken = jwt.sign({ name: googleEmailExist.name, email: googleEmailExist.email }, `${process.env.REFRESH_SECRET_TOKEN}`);
+
+
+
 
         const userId = googleEmailExist._id
-          
+
         googleUserId = ""
         googleHash = ""
 
-        if(isHashedGoogle){
-        //  googleHash = passFrontendHashed()
-            googleUserId = userId.toHexString()
+        if (isHashedGoogle) {
+          //  googleHash = passFrontendHashed()
+          googleUserId = userId.toHexString()
         }
 
-        res.cookie("accessToken",accessToken,options)
-   
-       return res.json({
-       message: "success",
-       accessToken: accessToken,
-       refreshToken: refreshToken,
-       params:userId,
-     //otherHash: googleHash
-       })
+        const options = {
+          httpOnly: JSON.parse(process.env.COOKIE_HTTP_ONLY || "true"), // Defaults to true
+          secure: JSON.parse(process.env.COOKIE_SECURE || "false"), // Should be true in production (HTTPS)
+          sameSite: "None", // Required for cross-origin cookies
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+ // 10 minutes
+        };
+        
+        // Set cookie
+        res.cookie("accessToken", accessToken, options);
+     //   res.json({ success: true, message: "Cookie set successfully!" });
+        
 
-    }
-  
-     const saltrounds = 10
-     const auth = process.env.GOOGLE_AUTH
-     const hashedPassword = await bcrypt.hash(auth, saltrounds)
-  
-      const googleAuthUser =  await newUser.create({
+
+
+        return res.json({
+          message: "success",
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          params: userId,
+          //otherHash: googleHash
+        })
+
+      }
+
+      const saltrounds = 10
+      const auth = process.env.GOOGLE_AUTH
+      const hashedPassword = await bcrypt.hash(auth, saltrounds)
+
+      const googleAuthUser = await newUser.create({
         name: given_name,
         email: googleEmail,
-        password : hashedPassword,
+        password: hashedPassword,
         picture: picture
       })
-     
-     //Token Validations
-     const accessToken = generateAccessToken({ name: googleAuthUser.name,email: googleAuthUser.email});
-     const refreshToken = jwt.sign({ name: googleAuthUser.name,email: googleAuthUser.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
-    
-     
-     
-     const options = {
-      httpOnly: true,
-      secure: process.env.COOKIE_SECURE,
-      sameSite: 'None',
-      maxAge: 10 * 60 * 1000,  
-     };
-     
-       const userIdAuth = googleAuthUser._id
 
-       googleUserId = ""
-       googleHash = ""
+      //Token Validations
+      const accessToken = generateAccessToken({ name: googleAuthUser.name, email: googleAuthUser.email });
+      const refreshToken = jwt.sign({ name: googleAuthUser.name, email: googleAuthUser.email }, `${process.env.REFRESH_SECRET_TOKEN}`);
 
-       if(isHashedGoogle){
-       // googleHash = passFrontendHashed()
-          googleUserId =  userIdAuth.toHexString()
-       }
 
-        res.cookie("accessToken",accessToken,options)
-   
-        return res.json({
+
+
+      const userIdAuth = googleAuthUser._id
+
+      googleUserId = ""
+      googleHash = ""
+
+      if (isHashedGoogle) {
+        // googleHash = passFrontendHashed()
+        googleUserId = userIdAuth.toHexString()
+      }
+
+
+
+      const options = {
+        httpOnly: JSON.parse(process.env.COOKIE_HTTP_ONLY || "true"), // Defaults to true
+        secure: JSON.parse(process.env.COOKIE_SECURE || "false"), // Should be true in production (HTTPS)
+        sameSite: "None", // Required for cross-origin cookies
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+      };
+      
+      // Set cookie
+      res.cookie("accessToken", accessToken, options);
+    //  res.json({ success: true, message: "Cookie set successfully!" });
+      
+
+      return res.json({
         message: "success",
         accessToken: accessToken,
         refreshToken: refreshToken,
         params: userIdAuth,
-      //otherHash:googleHash
-       })
-              
-   }
+        //otherHash:googleHash
+      })
 
-   else{
+    }
 
-
-    //Regular login
-    const { isHashedRegular } = req.body
-
-     const email = req.body.email
-     const password = req.body.password
-
-     const findEmail = await newUser.findOne({email})
-
-     if(!findEmail || findEmail == null){
-      return res.status(401).json({message: "not-found"})
-     }
-     
-     const hashedPassword = findEmail.password
-
-     const match = await bcrypt.compare(password,hashedPassword)
-
-     if(!match || match == null){
-      return res.status(403).json({message: "failure"})
-     }
+    else {
 
 
-         initialVendorStatus = findEmail.status
-         console.log(findEmail)
-     
-          //Token Validations
-          const accessToken = generateAccessToken({ name: findEmail.name,email: findEmail.email});
-          const refreshToken = jwt.sign({ name: findEmail.name,email: findEmail.email}, `${process.env.REFRESH_SECRET_TOKEN}`);
-         
-     
-     
-     const options = {
-      httpOnly: true,
-      secure: process.env.COOKIE_SECURE,
-      sameSite: 'None',
-      maxAge: 10 * 60 * 1000,  
-     };
+      //Regular login
+      const { isHashedRegular } = req.body
 
-     
+      const email = req.body.email
+      const password = req.body.password
 
-       res.cookie("accessToken",accessToken,options)
+      const findEmail = await newUser.findOne({ email })
 
-       const regularUserId = findEmail._id
+      if (!findEmail || findEmail == null) {
+        return res.status(401).json({ message: "not-found" })
+      }
 
-       normalUserId = ""
+      const hashedPassword = findEmail.password
 
-       regularHash = ""
+      const match = await bcrypt.compare(password, hashedPassword)
+
+      if (!match || match == null) {
+        return res.status(403).json({ message: "failure" })
+      }
 
 
-       if(isHashedRegular){
-      //  regularHash = passFrontendHashed()
+      initialVendorStatus = findEmail.status
+      console.log(findEmail)
+
+      //Token Validations
+      const accessToken = generateAccessToken({ name: findEmail.name, email: findEmail.email });
+      const refreshToken = jwt.sign({ name: findEmail.name, email: findEmail.email }, `${process.env.REFRESH_SECRET_TOKEN}`);
+
+
+      const options = {
+        httpOnly: JSON.parse(process.env.COOKIE_HTTP_ONLY || "true"), // Defaults to true
+        secure: JSON.parse(process.env.COOKIE_SECURE || "false"), // Should be true in production (HTTPS)
+        sameSite: "None", // Required for cross-origin cookies
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+      };
+      
+      // Set cookie
+      res.cookie("accessToken", accessToken, options);
+    //  res.json({ success: true, message: "Cookie set successfully!" });
+      
+
+
+      const regularUserId = findEmail._id
+
+      normalUserId = ""
+
+      regularHash = ""
+
+
+      if (isHashedRegular) {
+        //  regularHash = passFrontendHashed()
         normalUserId = regularUserId.toHexString()
-       }
+      }
 
- 
-        const findRole =  findEmail.role || {}
-        console.log(findRole)
-       
-       // Sending Additional details to frontend If role == 'VENDOR'
-       if(findRole === "VENDOR"){
-        
-         return res.json({
+
+      const findRole = findEmail.role || {}
+      console.log(findRole)
+
+      // Sending Additional details to frontend If role == 'VENDOR'
+      if (findRole === "VENDOR") {
+
+        return res.json({
           message: "vendor",
           accessToken: accessToken,
           refreshToken: refreshToken,
-          params: regularUserId, 
-          })    
-       }
-      
-        return res.json({
+          params: regularUserId,
+        })
+      }
+
+      return res.json({
         message: "success",
         accessToken: accessToken,
         refreshToken: refreshToken,
         params: regularUserId,
-     //   otherHash:regularHash
-        })
-              
-   }
-  
- }
- catch(err){
-  console.log("Oops some error occured",err)
- }
- 
+        //   otherHash:regularHash
+      })
+
+    }
+
+  }
+  catch (err) {
+    console.log("Oops some error occured", err)
+  }
+
 }
 
 
 //Refresh Endpoint
-async function handleRefresh(req,res){
+async function handleRefresh(req, res) {
 
-  const {googleAuthName,googleAuthEmail,isGoogleAuth,refreshToken} = req.body
+  const { googleAuthName, googleAuthEmail, isGoogleAuth, refreshToken } = req.body
 
-  if(isGoogleAuth == true){
+  if (isGoogleAuth == true) {
 
     //Verify Refersh Token
-    jwt.verify(refreshToken,`${process.env.REFRESH_SECRET_TOKEN}`, (err, user) => {
+    jwt.verify(refreshToken, `${process.env.REFRESH_SECRET_TOKEN}`, (err, user) => {
       if (err) return res.status(403).json("failure");
       console.log(err)
-      const accessToken = generateAccessToken({name : googleAuthName,
-                                            email : googleAuthEmail});
-   
-     const options = {
-      httpOnly: true,
-      secure: process.env.COOKIE_SECURE,
-      sameSite: 'None',
-      maxAge: 10 * 60 * 1000,  
-     };
+      const accessToken = generateAccessToken({
+        name: googleAuthName,
+        email: googleAuthEmail
+      });
 
-     res.cookie("accessToken",accessToken,options)
+      const options = {
+        httpOnly: JSON.parse(process.env.COOKIE_HTTP_ONLY || "false"), // Defaults to true
+        secure: JSON.parse(process.env.COOKIE_SECURE || "false"), // Should be true in production (HTTPS)
+        sameSite: "None", // Required for cross-origin cookies
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+      };
 
-     return res.json({
-      message: "success",
-      accessToken: accessToken,
-     })
-              
+      // Set cookie
+      res.cookie("accessToken", accessToken, options);
+    //  res.json({ success: true, message: "Cookie set successfully!" });
+
+
+      return res.json({
+        message: "success",
+        accessToken: accessToken,
+      })
+
     })
-  
+
   }
   else {
 
-     const { name , email ,refreshToken } = req.body
+    const { name, email, refreshToken } = req.body
 
-       //Verify Refersh Token
+    //Verify Refersh Token
 
-       jwt.verify(refreshToken,`${process.env.REFRESH_SECRET_TOKEN}`,(err,user)=>{
-           if(err) return res.status(403).json('failure');
+    jwt.verify(refreshToken, `${process.env.REFRESH_SECRET_TOKEN}`, (err, user) => {
+      if (err) return res.status(403).json('failure');
 
-              const accessToken = generateAccessToken({name : name,
-              email : email})
-    
-     const options = {
-      httpOnly: true,
-      secure: process.env.COOKIE_SECURE,
-      sameSite: 'None',
-      maxAge: 10 * 60 * 1000,  
-     };
+      const accessToken = generateAccessToken({
+        name: name,
+        email: email
+      })
 
-    
+      const options = {
+        httpOnly: JSON.parse(process.env.COOKIE_HTTP_ONLY || "true"), // Defaults to true
+        secure: JSON.parse(process.env.COOKIE_SECURE || "false"), // Should be true in production (HTTPS)
+        sameSite: "None", // Required for cross-origin cookies
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+      };
+      
+      // Set cookie
+      res.cookie("accessToken", accessToken, options);
+    //  res.json({ success: true, message: "Cookie set successfully!" });
+      
 
-              res.cookie("accessToken",accessToken,options)
-                
-             return res.json({
-              message: "success",
-              accessToken: accessToken,
-              })
-   })
-       
+
+      return res.json({
+        message: "success",
+        accessToken: accessToken,
+      })
+    })
+
   }
 
 
@@ -268,7 +290,7 @@ async function handleRefresh(req,res){
 
 //Generate Access Token
 const generateAccessToken = (user) => {
-  return jwt.sign(user,`${process.env.ACCESS_SECRET_TOKEN}`);
+  return jwt.sign(user, `${process.env.ACCESS_SECRET_TOKEN}`);
 };
 
 
@@ -280,59 +302,59 @@ async function handleUserSignUP(req, res) {
   try {
 
     // Vendor SignUp
-    const { gst,name, email, password, role } = req.body
+    const { gst, name, email, password, role } = req.body
 
-    if ( role == 'VENDOR') {
+    if (role == 'VENDOR') {
 
-        const vendorExist = await newUser.findOne({ email })
+      const vendorExist = await newUser.findOne({ email })
 
-        if(vendorExist){
-          return res.status(401).json("failure")
-        }
+      if (vendorExist) {
+        return res.status(401).json("failure")
+      }
 
 
-       const saltrounds = 10
-       const hashedPassword = await bcrypt.hash(password,saltrounds)
+      const saltrounds = 10
+      const hashedPassword = await bcrypt.hash(password, saltrounds)
 
-        const user =   await newUser.create({
-          name:name,
-          email:email,
-          password:hashedPassword,
-          role:role,
-          gst:gst
-        })
+      const user = await newUser.create({
+        name: name,
+        email: email,
+        password: hashedPassword,
+        role: role,
+        gst: gst
+      })
 
-        initialVendorStatus = user.status
+      initialVendorStatus = user.status
 
-        io.emit("message",user)
+      io.emit("message", user)
 
-       return res.json("success")
+      return res.json("success")
     }
 
- ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     else {
-    
-        const { name, email, password } = req.body
-        const userExist = await newUser.findOne({ email })
 
-        if (userExist) {
-          return res.status(401).json({
-            message : "already-exists"
-          })
-          
-        }
+      const { name, email, password } = req.body
+      const userExist = await newUser.findOne({ email })
 
-        const saltrounds = 10
-        const hashedPassword = await bcrypt.hash(password, saltrounds)
+      if (userExist) {
+        return res.status(401).json({
+          message: "already-exists"
+        })
 
-         await newUser.create({
-          name:name,
-          email:email,
-          password: hashedPassword,     
-         })
+      }
 
-           return res.json("success")   
+      const saltrounds = 10
+      const hashedPassword = await bcrypt.hash(password, saltrounds)
+
+      await newUser.create({
+        name: name,
+        email: email,
+        password: hashedPassword,
+      })
+
+      return res.json("success")
     }
   }
 
@@ -342,12 +364,12 @@ async function handleUserSignUP(req, res) {
 
 }
 
-function VendorInitialStatus(){
+function VendorInitialStatus() {
   return initialVendorStatus
 }
 
-function PassUserIds(){
-  return {googleUserId,normalUserId}
+function PassUserIds() {
+  return { googleUserId, normalUserId }
 }
 
 

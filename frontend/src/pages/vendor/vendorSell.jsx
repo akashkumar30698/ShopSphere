@@ -4,6 +4,7 @@ import VendorNavbar from "../../components/VendorNavbar";
 import Cookies from "js-cookie";
 import { useParams } from "react-router-dom";
 import { useLogin } from "../../ContextApi/loginContext";
+import { checkCookie } from "../../utils/checkCookie";
 
 function VendorSell() {
 
@@ -14,7 +15,7 @@ function VendorSell() {
 
   const fetchVendorStatus = async () => {
     try {
-      const token = Cookies.get("accessToken");
+      const token = await checkCookie("accessToken");
 
       if (!token) {
         return;

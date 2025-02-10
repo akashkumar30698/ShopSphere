@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import VendorNavbar from "../../components/VendorNavbar";
+import { checkCookie } from "../../utils/checkCookie";
 
 function VendorProducts() {
     const [products, setProducts] = useState([]);
@@ -11,7 +12,7 @@ function VendorProducts() {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const token = Cookies.get("accessToken");
+            const token = await checkCookie("accessToken")
 
             if (!token) {
                 return;
@@ -39,15 +40,11 @@ function VendorProducts() {
 
     const handleDeleteClick = async (productId) =>{
         try{
-             const token = Cookies.get("accessToken")
+             const token = await checkCookie("accessToken")
 
             if(!token){
                  return
             }
-
-
-
-
              const res = await fetch(`${import.meta.env.VITE_APP_URL}/:userId/vendor/Your-Products?productId=${productId}`,{
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }

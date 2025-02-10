@@ -7,16 +7,21 @@ const { router: home } = require("./routes/userAuth")
 const { router: admin } = require("./routes/adminAuth.js")
 const { router: cart } = require("./routes/addToCart.js")
 const session = require('express-session');
+const cookieParser = require("cookie-parser");
+
 require("dotenv").config()
 
 
 const PORT = process.env.PORT ||  8000
 
+// Use cookie-parser middleware
+app.use(cookieParser());
+
 
 
 // Middleware to set Cross-Origin-Opener-Policy
 app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+ // res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
   next();
 })
 
@@ -28,7 +33,7 @@ app.use(session({
   secret: `${process.env.SESSION_SECRET_KEY}`, // Replace with a strong secret key
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true } // Set secure to true if using HTTPS
+  cookie: { secure: process.env.COOKIE_SECURE } // Set secure to true if using HTTPS
 }));
 
 
@@ -52,6 +57,25 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+
+app.get("/check-cookie", (req, res) => {
+  const cookieName = "accessToken" || "refreshToken"; // Change this to your actual cookie name
+
+  if (req.cookies[cookieName]) {
+    res.json({
+      exists: true,
+      message: `Cookie "${cookieName}" exists!`,
+      value: req.cookies[cookieName] // ✅ Return the cookie value
+    });
+  } else {
+    res.json({
+      exists: false,
+      message: `Cookie "${cookieName}" not found!`
+    });
+  }
+});
+
 
 
 

@@ -96,7 +96,7 @@
     }
 
     .overflowing{
-      overflow-y: hidden !important;
+      /* overflow-y: hidden !important; */
     }
 
    .responsive {

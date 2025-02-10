@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import Cookies from "js-cookie"
 import { Link } from 'react-router-dom'
+import { checkCookie } from '../utils/checkCookie'
 
 
 function classNames(...classes) {
@@ -30,12 +31,18 @@ export default function Example() {
   }
 
   useEffect(() => {
-    const getCookie = Cookies.get("accessToken")
-    if (getCookie) {
-      setIsLoggedIn(true)
-    } else {
-      navigate("/")
+
+    const check = async () =>{
+      const getCookie = await checkCookie("accessToken")
+      if (getCookie) {
+        setIsLoggedIn(true)
+      } else {
+        navigate("/")
+      }
     }
+
+    check()
+   
   }, [])
 
 

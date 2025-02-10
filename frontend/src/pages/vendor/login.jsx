@@ -1,20 +1,21 @@
-import { Link, useNavigate,useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import "../../App.css";
 import { useLogin } from "../../ContextApi/loginContext";
 import Cookies from "js-cookie";
-import  RequestStatus  from "../../requestStatus/requestStatus";
+import RequestStatus from "../../requestStatus/requestStatus";
 import { useAuthContext } from "../../ContextApi/authProvider";
+import { checkCookie } from "../../utils/checkCookie";
 
 function VendorLogin() {
   const navigate = useNavigate();
   const { setFormData, setCheckCookie, setRefreshToken, formData } = useAuthContext();
-  const [invalidCredentials,setInvalidCredentials] = useState(false)
+  const [invalidCredentials, setInvalidCredentials] = useState(false)
   const [isRequested, setIsRequested] = useState(false);
-  const [wrongPassword,setWrongPassword] = useState(false)
+  const [wrongPassword, setWrongPassword] = useState(false)
   const [sendRequestToAdmin, setSendRequestToAdmin] = useState(false);
- 
-  
+
+
   const { isLoggedIn, setIsLoggedIn } = useLogin();
 
 
@@ -26,7 +27,7 @@ function VendorLogin() {
   // Login
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const res = await fetch(`${import.meta.env.VITE_APP_URL}/vendor/login`, {
         method: "POST",
@@ -34,23 +35,30 @@ function VendorLogin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       if (res.ok) {
         const data = await res.json();
-  
+
         if (data.message === "vendor") {
           navigate(`/${data.params}/vendor/Your-Products`);
-  
+
           Cookies.set("accessToken", data.accessToken);
-  
+
           setRefreshToken(data.refreshToken);
           setIsLoggedIn(true);
-          setCheckCookie(Cookies.get("accessToken"));
-  
+
+          const token = await checkCookie("accessToken")
+
+          if (!token) {
+            console.log("no token found")
+            return
+          }
+          setCheckCookie(token);
+
           setIsRequested(true);
           setWrongPassword(false);
           setInvalidCredentials(false)
-  
+
           setSendRequestToAdmin(true);
         }
       } else if (res.status === 403) {
@@ -59,7 +67,7 @@ function VendorLogin() {
         resetForm();
 
       } else if (res.status === 401) {
-        setInvalidCredentials(true); 
+        setInvalidCredentials(true);
         setWrongPassword(false)
         console.log("res")
         resetForm();
@@ -71,12 +79,11 @@ function VendorLogin() {
       console.log("Error logging in: ", err);
     }
   };
-  
+
 
   const resetForm = () => {
     setIsLoggedIn(false);
     setIsRequested(false);
-  
     setSendRequestToAdmin(false);
   };
 
@@ -125,8 +132,8 @@ function VendorLogin() {
                 </div>
 
                 {wrongPassword && <p className="text-red-700">Invalid Email or Password</p>}
-                
-                { 
+
+                {
                   invalidCredentials && <div className="text-red-700" >Invaild credentials</div>
                 }
 
@@ -173,7 +180,7 @@ function VendorLogin() {
 
       {/* Others */}
       <RequestStatus isRequested={isRequested} />
-    
+
 
     </>
   );

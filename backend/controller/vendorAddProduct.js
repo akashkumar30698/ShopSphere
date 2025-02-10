@@ -5,8 +5,7 @@ const cors = require("cors")
 
 async function handleAddVendorProduct(req,res){
     try{
-        
-       
+
         const {productTitle,productDescription,productPrice,category} = req.body
          const userId = req.query.userId
 
@@ -51,13 +50,11 @@ async function handleAddVendorProduct(req,res){
 async function handleVendorYourProducts(req,res){
     try{
          const userId = req.query.userId
-         
          if(!userId){
           return res.status(401).json({message:"No userId find"})
          }
-          
-        const products =  await productDetail.find({createdBy:userId})
 
+        const products =  await productDetail.find({createdBy:userId})
         return res.json({
           products: products
         })
@@ -89,7 +86,6 @@ async function handleDeleteProduct(req,res){
 
 async function handleGetAllProducts(req, res) {
   // Enable CORS for this route
-  cors()(req, res, async () => {
     try {
       const allProducts = await productDetail.find()
 
@@ -100,7 +96,7 @@ async function handleGetAllProducts(req, res) {
       console.log("Some error occurred", err)
       return res.status(500).json({ error: "Internal server error" })
     }
-  })
+  
 }
 
 module.exports = {

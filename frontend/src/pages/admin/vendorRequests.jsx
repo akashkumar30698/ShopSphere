@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Admin from "../../components/admin";
 import Cookies from "js-cookie";
 import io from "socket.io-client";
+import { checkCookie } from "../../utils/checkCookie";
 
 function VendorRequests() {
   const [isRequestedCheck, setIsRequestedCheck] = useState(false);
@@ -44,7 +45,7 @@ function VendorRequests() {
   
 
   const fetchVendorDetails = async () => {
-    const token = Cookies.get("accessToken");
+    const token = await checkCookie("accessToken")
 
     if (!token) {
       return null;
@@ -77,7 +78,7 @@ function VendorRequests() {
           const socket = io(`${import.meta.env.VITE_APP_URL}`)
 
     try {
-      const token = Cookies.get("accessToken");
+      const token = await  checkCookie("accessToken");
   
       if (!token) {
         return;

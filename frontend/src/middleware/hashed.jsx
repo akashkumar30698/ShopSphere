@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { getLatestValues } from "./isAuthethicated"
 import Cookies from "js-cookie"
 import { useSearchParams } from "react-router-dom";
+import { checkCookie } from "../utils/checkCookie";
 
 function Hashed(){
 
@@ -9,13 +10,19 @@ function Hashed(){
     const isHashed = searchParams.get('hashed');
 
    useEffect(()=>{
-    const token = Cookies.get("accessToken")
 
-    if(!token){
-        return
+    const check = async () =>{
+        const token = await checkCookie("accessToken")
+
+        if(!token){
+            return
+        }
+    
+        getLatestValues(token,isHashed)
     }
 
-    getLatestValues(token,isHashed)
+    check()
+
 
    },[])
 

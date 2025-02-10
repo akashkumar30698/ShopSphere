@@ -4,6 +4,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useLogin } from "../ContextApi/loginContext";
 import Cookies from "js-cookie";
+import { checkCookie } from "../utils/checkCookie";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -25,13 +26,16 @@ function Admin() {
     };
 
     useEffect(() => {
-        const getCookie = Cookies.get("accessToken");
-        if (!getCookie) {
-            navigate("/");
-            return
+        const checkExist = async () =>{
+            const getCookie = await checkCookie("accessToken")
+            if (!getCookie) {
+                navigate("/");
+                return
+            }
+    
+            setIsLoggedIn(true)
         }
-
-        setIsLoggedIn(true)
+         checkExist()      
 
     }, [navigate]);
 

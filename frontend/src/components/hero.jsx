@@ -6,6 +6,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useLogin } from "../ContextApi/loginContext.jsx"
 import "../App.css"
 import LoadingSkeleton from "./skeletonCard.jsx"
+import { checkCookie } from "../utils/checkCookie.js"
 
 // Helper function to get the total quantity in the cart
 export const getCount = () => {
@@ -302,27 +303,55 @@ const dummyProducts = [
 
 function Hero() {
 
-  const { products ,setProducts } = useLogin()
+  const { products ,setProducts,setIsLoggedIn } = useLogin()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const { userId } = useParams()
 
+
+  useEffect(()=>{
+
+    const check = async () =>{
+      try {
+        const cookie = await checkCookie("accessToken")
+        if(cookie){
+          setIsLoggedIn(true)
+          return
+        }
+
+        setIsLoggedIn(false)
+      } catch (error) {
+         console.log("some error occured :",error)
+      }
+    }
+
+    check()
+
+  },[])
+
   // Function to fetch all products
   const fetchAllProducts = async () => {
     try {
       setLoading(true)
-      const res = await fetch(`${import.meta.env.VITE_APP_URL}/all-products`, {
-        method: "GET",
-      })
+         // Timeout function that rejects after 3 seconds
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Request timed out")), 3000)
+    );
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch products")
-      }
+    // Fetch API call
+    const fetchPromise = fetch(`${import.meta.env.VITE_APP_URL}/all-products`, {
+      method: "GET",
+    }).then(res => {
+      if (!res.ok) throw new Error("Failed to fetch products");
+      return res.json();
+    });
 
-      const data = await res.json()
-      console.log("data :",data)
-      setProducts(data.allProduct.length > 0 ? data.allProduct : dummyProducts)
+    // Race between fetch and timeout
+    const data = await Promise.race([fetchPromise, timeoutPromise]);
+
+    console.log("data :", data);
+    setProducts(data.allProduct.length > 0 ? data.allProduct : dummyProducts);
     } catch (err) {
       console.error("Error fetching products:", err)
       setProducts(dummyProducts) // Fallback to dummy products in case of error
@@ -334,10 +363,11 @@ function Hero() {
 
   // Add to cart functionality
   const handleAddToCart = useCallback(
-    (productId, productPhoto, productTitle, productPrice) => {
-      const token = Cookies.get("accessToken")
+    async (productId, productPhoto, productTitle, productPrice) => {
+      const token =  await checkCookie("accessToken")
 
       if (!token) {
+        console.log("token:",token)
         navigate("/login")
         return
       }
