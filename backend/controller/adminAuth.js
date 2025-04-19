@@ -21,7 +21,7 @@ async function handleAdminLogin(req, res) {
     const protectedPassword = `${process.env.ADMIN_PASSWORD}`
     console.log("data got :",email,protectedEmail)
 
-    if (secretCode == protectedSecretCode && email == protectedEmail && password == protectedPassword) {
+    if (secretCode == protectedSecretCode  && password == protectedPassword) {
       //Token Validations
       const accessToken = generateAccessToken({ secretCode: secretCode, email: email, password: password });
       const refreshToken = jwt.sign({ secretCode: secretCode, email: email, password: password }, `${process.env.REFRESH_SECRET_TOKEN}`);
